@@ -1,0 +1,22 @@
+{
+  "_doc": "Body atlas cells in pixels (x0, y0, x1, y1) of a 128x128 texture, v down. Tube parts are cylindrically unwrapped: u 0 = back center, 0.25 = character's right (-X), 0.5 = front, 0.75 = character's left (+X), 1 = back. Top of the part = top of cell. Feet: 'front' of the tube = top of the foot, top of cell = heel. Shared by make_clothes.py and build_character.py.",
+  "size": [128, 128],
+  "cells": {
+    "chest":     [0, 0, 64, 26],
+    "abdomen":   [0, 26, 64, 40],
+    "hips":      [0, 40, 64, 54],
+    "upper_leg": [64, 0, 96, 40],
+    "lower_leg": [96, 0, 128, 40],
+    "upper_arm": [64, 40, 96, 64],
+    "lower_arm": [96, 40, 128, 64],
+    "hand":      [0, 54, 16, 64],
+    "neck":      [16, 54, 32, 64],
+    "foot":      [32, 54, 64, 64],
+    "hat":       [0, 64, 64, 96],
+    "scarf":     [64, 64, 128, 96],
+    "skirt":     [0, 96, 64, 128],
+    "bag":       [64, 96, 120, 128],
+    "black":     [120, 96, 128, 112],
+    "skin":      [120, 112, 128, 128]
+  }
+}
