@@ -15,6 +15,9 @@ const FOG_PRESETS := {
 var low_res := false            # true -> 320x240 snapping ("extreme" mode)
 var current_preset := "night"
 var _static := 0.0
+var _fog_near := 6.0
+var _fog_far := 10.0
+var _fog_color := Color(0.03, 0.03, 0.04)
 
 func _ready() -> void:
 	low_res = SaveSystem.get_setting("low_res", false)
@@ -46,14 +49,26 @@ func set_fog(near: float, far: float, color: Color, duration := 1.0) -> void:
 	if duration <= 0.0:
 		_apply_fog(near, far, color)
 		return
-	var from_near: float = RenderingServer.global_shader_parameter_get("psx_fog_near")
-	var from_far: float = RenderingServer.global_shader_parameter_get("psx_fog_far")
-	var from_col: Color = RenderingServer.global_shader_parameter_get("psx_fog_color")
+	var from_near := _fog_near
+	var from_far := _fog_far
+	var from_col := _fog_color
 	var t := create_tween()
 	t.tween_method(func(k: float):
 		_apply_fog(lerp(from_near, near, k), lerp(from_far, far, k), from_col.lerp(color, k)), 0.0, 1.0, duration)
 
+func get_fog_near() -> float:
+	return _fog_near
+
+func get_fog_far() -> float:
+	return _fog_far
+
+func get_fog_color() -> Color:
+	return _fog_color
+
 func _apply_fog(near: float, far: float, color: Color) -> void:
+	_fog_near = near
+	_fog_far = far
+	_fog_color = color
 	RenderingServer.global_shader_parameter_set("psx_fog_near", near)
 	RenderingServer.global_shader_parameter_set("psx_fog_far", far)
 	RenderingServer.global_shader_parameter_set("psx_fog_color", color)

@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://gameplay/minigames/test/test_harness.gd" id="1"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/test/test_player.tscn" id="2"]
+[ext_resource type="Script" path="res://gameplay/minigames/test/test_door.gd" id="3"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/shelf_stock/shelf_stock.tscn" id="10"]
+
+[node name="TestShelfStock" type="Node3D"]
+script = ExtResource("1")
+room_size = Vector3(6, 2.8, 6)
+
+[node name="ShelfStock" parent="." instance=ExtResource("10")]
+position = Vector3(0, 0, -2.7)
+objective_id = "test_shelf"
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector3(0, 0, -1.5)
+
+[node name="Views" type="Node3D" parent="."]
+
+[node name="main" type="Marker3D" parent="Views"]
+position = Vector3(-0.1, 0, -1.55)
+
+[node name="Look" type="Marker3D" parent="Views/main"]
+position = Vector3(0.1, 1.1, -1.2)
+
+[node name="box" type="Marker3D" parent="Views"]
+position = Vector3(-1.2, 0, -0.6)
+
+[node name="Look" type="Marker3D" parent="Views/box"]
+position = Vector3(-0.4, 0.5, -0.8)
+

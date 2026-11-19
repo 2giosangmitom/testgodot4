@@ -14,7 +14,7 @@ var current_chapter: Node = null
 var transitioning := false
 var _handling_death := false
 
-const CAUGHT_RELOAD_DELAY := 3.2
+const CAUGHT_FALLBACK_TIMEOUT := 6.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -47,7 +47,19 @@ func _on_player_caught(_entity_id: String, _cause: String) -> void:
 		return
 	_handling_death = true
 	GameState.lock_input("dead")
-	await get_tree().create_timer(CAUGHT_RELOAD_DELAY).timeout
+	# Normal path: CaughtSequence finishes (~2.5 s + fade) and emits entity_state_changed(id, "caught_done").
+	# Fallback: if nothing reports completion (e.g. Player.kill without a sequence), reload after a timeout.
+	var done := [false]
+	var cb := func(_id: String, state: String):
+		if state == "caught_done":
+			done[0] = true
+	EventBus.entity_state_changed.connect(cb)
+	var t := 0.0
+	while not done[0] and t < CAUGHT_FALLBACK_TIMEOUT:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	EventBus.entity_state_changed.disconnect(cb)
+	await get_tree().create_timer(0.3).timeout
 	RenderSettings.set_static(0.0)
 	AudioDirector.stop_voice()
 	EventBus.subtitle_clear.emit()
