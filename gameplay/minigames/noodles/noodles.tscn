@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://gameplay/minigames/noodles/noodles.gd" id="1"]
+
+[node name="Noodles" type="Node3D"]
+script = ExtResource("1")
+minigame_id = "noodles"
+
+[node name="Stove" type="Marker3D" parent="."]
+position = Vector3(-0.12, 0.69, 0)
+
+[node name="NoodlePack" type="Marker3D" parent="."]
+position = Vector3(0.28, 0.6, 0.05)
+rotation = Vector3(0, 0.4, 0)
+
+[node name="TimerDisplay" type="Marker3D" parent="."]
+position = Vector3(0, 1.35, -0.3)
