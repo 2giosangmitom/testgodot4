@@ -231,7 +231,9 @@ func _test_gazer() -> void:
 		root.get_node("EventBus").entity_state_changed.connect(func(id, s): if s == "caught_done": done_state[0] = id)
 		await seq.finished
 		check(done_state[0] == h.entity_id, "caught sequence finished -> entity_state_changed(caught_done)")
-		check(not root.get_node("GameState").is_input_locked(), "caught sequence releases its input lock")
+		var leftover: Array = root.get_node("GameState").input_locks.keys()
+		leftover.erase("dead")   # ChapterDirector holds "dead" until the checkpoint reload
+		check(leftover.is_empty(), "caught sequence releases its input lock (left: %s)" % [leftover])
 	h.deactivate()
 	h.queue_free()
 
