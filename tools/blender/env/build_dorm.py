@@ -25,7 +25,7 @@ XB = -7.7                # back wall centre
 ZN, ZS = -14.0, -31.6    # dorm north / south ends
 
 # ================================================================== lane (z +3 .. -15) + entrance stub
-env.floor(-1.4, 3.0, 1.4, -15.0, 0.0, "concrete")
+env.floor(-1.4, 3.0, 1.4, -16.8, 0.0, "concrete")
 S.puddles(env, rng, (-0.8, 2.0, 0.8, -14.0), 4)
 env.quad((0.75, 0.004, 3.0), (0.2, 0, 0), (0, 0, -18.0), "concrete_dark", seg=4)
 rows_w = S.alley_side(env, "+x", -1.0, -14.0, 3.0, rng, jitter=0.3)
@@ -89,8 +89,7 @@ for i in range(NST):
 # stringer under the stair
 env.face([(-7.1, 0.0, SZ1), (-2.6, F2 - 0.06, SZ1), (-2.6, F2 - 0.35, SZ1), (-6.7, 0.0, SZ1)], "concrete")
 env.face([(-6.7, 0.0, SZ1), (-2.6, F2 - 0.35, SZ1), (-2.6, F2 - 0.35, SZ0), (-6.7, 0.0, SZ0)], "concrete_dark")
-env.col_ramp((-7.25, 0.0, (SZ0 + SZ1) / 2), (-2.5, F2, (SZ0 + SZ1) / 2), 0.9, cat="stairs")
-env.col((-7.1, 0, SZ1), (-5.6, 1.0, SZ0), "props")
+env.col_ramp((-7.25, 0.0, (SZ0 + SZ1) / 2), (-2.62, F2 + 0.01, (SZ0 + SZ1) / 2), 0.9, cat="stairs")
 # stair handrail (sloped cutout railing) + its collision
 env.face([(-7.1, 0.05, SZ1 - 0.03), (-2.6, F2 + 0.05, SZ1 - 0.03), (-2.6, F2 + 0.95, SZ1 - 0.03), (-7.1, 0.95, SZ1 - 0.03)],
          "railing@cut", uvs=[(0, 0), (4.5, 0), (4.5, 1), (0, 1)])

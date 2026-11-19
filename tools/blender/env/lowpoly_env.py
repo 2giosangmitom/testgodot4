@@ -20,8 +20,10 @@ Conventions produced here:
 Usage inside Blender:  import lowpoly_env as L ; env = L.Env("school") ; ... ; env.export()
 """
 import bpy
+import json
 import math
 import os
+import struct
 import sys
 from contextlib import contextmanager
 from mathutils import Vector, Matrix
@@ -640,6 +642,7 @@ class Env:
             export_cameras=False, export_image_format="AUTO", export_materials="EXPORT",
             export_animations=False, export_texcoords=True, export_normals=True,
             use_selection=False)
+        externalize_glb_images(path)
         tot = self.stats()
         ncol = sum(len(b) for b in self.cols.values())
         names = sorted(n for n, *_ in self.markers)
@@ -650,6 +653,72 @@ class Env:
             print("[env]   biggest: " + ", ".join(f"{g.name}={g.tris()}" for g in big))
             print("[env]   markers: " + " ".join(names))
         return tot
+
+
+def externalize_glb_images(path, tex_dir=TEX_DIR):
+    """Rewrite a .glb so every embedded image becomes an external `uri` pointing at the shared
+    PNG in assets/textures/env (relative path). Godot then loads those textures as resources
+    (one import, PSX import settings, no per-glb extracted copies). The BIN chunk is compacted."""
+    data = open(path, "rb").read()
+    magic, _ver, length = struct.unpack_from("<4sII", data, 0)
+    assert magic == b"glTF", path
+    off, chunks = 12, []
+    while off < length:
+        clen, ctype = struct.unpack_from("<I4s", data, off)
+        off += 8
+        chunks.append((ctype, data[off:off + clen]))
+        off += clen
+    js = json.loads(chunks[0][1].decode("utf-8"))
+    bin_ = chunks[1][1] if len(chunks) > 1 else b""
+    rel = os.path.relpath(tex_dir, os.path.dirname(os.path.abspath(path))).replace(os.sep, "/")
+    drop = set()
+    for im in js.get("images", []):
+        if "bufferView" in im:
+            name = im.get("name")
+            if not name or not os.path.exists(os.path.join(tex_dir, name + ".png")):
+                continue
+            drop.add(im.pop("bufferView"))
+            im.pop("mimeType", None)
+            im["uri"] = f"{rel}/{name}.png"
+    if not drop:
+        return
+    remap, views, nb = {}, [], bytearray()
+    for i, v in enumerate(js.get("bufferViews", [])):
+        if i in drop:
+            continue
+        st = v.get("byteOffset", 0)
+        seg = bin_[st:st + v["byteLength"]]
+        while len(nb) % 4:
+            nb.append(0)
+        v = dict(v)
+        v["byteOffset"] = len(nb)
+        nb += seg
+        remap[i] = len(views)
+        views.append(v)
+    js["bufferViews"] = views
+    for a in js.get("accessors", []):
+        if "bufferView" in a:
+            a["bufferView"] = remap[a["bufferView"]]
+        sp = a.get("sparse")
+        if sp:
+            sp["indices"]["bufferView"] = remap[sp["indices"]["bufferView"]]
+            sp["values"]["bufferView"] = remap[sp["values"]["bufferView"]]
+    for im in js.get("images", []):
+        if "bufferView" in im:
+            im["bufferView"] = remap[im["bufferView"]]
+    while len(nb) % 4:
+        nb.append(0)
+    js["buffers"][0]["byteLength"] = len(nb)
+    jb = json.dumps(js, separators=(",", ":")).encode("utf-8")
+    while len(jb) % 4:
+        jb += b" "
+    total = 12 + 8 + len(jb) + 8 + len(nb)
+    with open(path, "wb") as f:
+        f.write(struct.pack("<4sII", b"glTF", 2, total))
+        f.write(struct.pack("<I4s", len(jb), b"JSON"))
+        f.write(jb)
+        f.write(struct.pack("<I4s", len(nb), b"BIN\x00"))
+        f.write(bytes(nb))
 
 
 def run_args():

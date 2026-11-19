@@ -222,8 +222,8 @@ for x in (-1.5, 1.5):
 for x in (BXL - 0.1, BXR + 0.1):
     env.wall("z", x, BZF, BZB - 0.1, 0, 8.0, "wall_yellow", t=0.2, tint=(0.88, 0.85, 0.8))
 # back wall of the corridor = classroom front walls (z -21), y FY..F2
-DOOR_A = (-4.0, -3.1)
-win_A = [(-2.2, -0.2), (0.6, 2.6), (3.2, 4.6)]
+DOOR_A = (-3.0, -2.1)
+win_A = [(-1.4, 0.4), (1.1, 2.9), (3.4, 4.6)]
 ops = [(DOOR_A[0], DOOR_A[1], FY, FY + 2.1, "door")] + [(a, b, FY + 0.9, FY + 2.3, "window") for a, b in win_A]
 env.wall("x", -21.0, BXL, BXR, FY, F2, "wall_yellow", t=0.2, openings=ops, tint=(0.95, 0.92, 0.85))
 for a, b in win_A:  # bars + glass-less wooden frame
@@ -288,9 +288,9 @@ with env.obj("classroom_clock"):
     env.box((CX1 - 0.04, FY + 2.35, -24.75), (CX1, FY + 2.75, -24.35), "metal_dark", mats={"-x": "clock_face"},
             rects={"-x": (0, 0, 1, 1)})
 env.marker("clock", (CX1 - 0.05, FY + 2.55, -24.55), yaw=90)
-env.box((CX0, FY, CZ1), (-3.6, FY + 0.2, CZ0), "wood_planks", skip=("-y", "-x"))
-env.col((CX0, FY, CZ1), (-3.6, FY + 0.2, CZ0), "floor")
-env.col_ramp((-3.25, FY, -24.5), (-3.62, FY + 0.2, -24.5), 6.6, cat="stairs")
+env.box((CX0, FY, CZ1), (-3.7, FY + 0.2, CZ0), "wood_planks", skip=("-y", "-x"))
+env.col((CX0, FY, CZ1), (-3.7, FY + 0.2, CZ0), "floor")
+env.col_ramp((-3.3, FY, -24.55), (-3.72, FY + 0.2, -24.55), 6.85, cat="stairs")
 env.box((-4.6, FY + 0.2, -25.1), (-4.0, FY + 0.95, -23.9), "wood_dark", mats={"+y": "desk_wood"}, skip=("-y",))
 env.col((-4.6, FY + 0.2, -25.1), (-4.0, FY + 0.95, -23.9), "props")
 P.stool(env, (-4.75, FY + 0.2, -24.5), mat="plastic_red", h=0.45)
@@ -310,9 +310,10 @@ for c in ROWS:
         for zz in (za + 0.05, zb - 0.09):
             env.box((c + 0.5, y, zz), (c + 0.56, y + 0.42, zz + 0.04), "wood_dark", skip=("+y", "-y"))
             env.box((c + 0.2, y + 0.05, zz), (c + 0.5, y + 0.09, zz + 0.04), "wood_dark", skip=("-y",))
-        env.col((c - 0.225, y, za), (c + 0.68, y + 0.75, zb), "props")
+        env.col((c - 0.225, y, za), (c + 0.225, y + 0.75, zb), "props")      # desk
+        env.col((c + 0.38, y, za), (c + 0.68, y + 0.46, zb), "props")         # bench (sittable)
 env.marker("seat_nam", (0.4 + 0.53, FY + 0.46, -22.9), yaw=90)
-env.marker("spawn_classroom", (0.4 + 0.53, FY, -22.9), yaw=90)
+env.marker("spawn_classroom", (0.4 + 0.53, FY, -21.85), yaw=90)        # aisle beside Nam's seat
 env.marker("hide_desk_teacher", (-4.3, FY + 0.2, -24.5), yaw=90)
 # fans + tube lights
 for i, x in enumerate((-1.8, 0.6, 3.0)):

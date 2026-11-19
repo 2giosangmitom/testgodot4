@@ -96,12 +96,12 @@ def bike(x, z, yaw, paint="bike_paint"):
 bike(4.85, -15.0, 0)
 bike(4.85, -22.6, 180, "plastic_blue")
 bike(-7.0, -28.45, 92)
-bike(-14.45, -44.0, 3, "metal_paint")
+bike(-14.55, -44.0, 2, "metal_paint")
 for (x, z, s) in ((3.75, -13.2, 1.0), (3.75, -19.5, 0.8), (5.0, -27.3, 1.1), (-2.0, -27.45, 0.9), (-9.5, -28.6, 1.0),
                   (-13.45, -33.0, 0.9), (-14.55, -37.5, 1.2), (-13.45, -47.0, 1.0)):
     P.potted_plant(env, (x, 0, z), s, yaw=rng.uniform(0, 90))
 # water drums, trash bags, stools
-for (x, z) in ((3.8, -24.5), (-12.0, -27.5), (-13.5, -40.5)):
+for (x, z) in ((4.95, -25.6), (-9.0, -27.38), (-13.35, -40.5)):
     env.cyl((x, 0, z), 0.28, 0.75, "plastic_blue", segs=7, cap_mat="plastic_blue")
     env.col((x - 0.28, 0, z - 0.28), (x + 0.28, 0.75, z + 0.28), "props")
 for (x, z) in ((5.0, -20.0), (-4.5, -28.6), (-14.5, -49.5)):

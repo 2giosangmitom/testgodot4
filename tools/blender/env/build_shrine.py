@@ -16,7 +16,7 @@ env = L.Env("shrine")
 rng = random.Random(1313)
 
 # ================================================================== lane z -15 .. -35
-env.floor(-1.1, -15.0, 1.3, -35.0, 0.0, "concrete")
+env.floor(-1.1, -16.8, 1.3, -35.0, 0.0, "concrete")
 S.puddles(env, rng, (-0.8, -16.0, 0.3, -34.0), 4)
 rows = []
 for (line, a0, a1) in ((1.0, -22.0, -15.0), (0.8, -29.0, -22.0), (0.55, -35.0, -29.0)):
@@ -29,8 +29,8 @@ while z > -34.5:
 P.cables_between(env, (0.6, -15.0), (0.6, -35.0), 4.6, n=3, sag=0.5, rng=rng, spread=0.2)
 P.potted_plant(env, (0.45, 0, -18.5), 0.9)
 P.potted_plant(env, (0.3, 0, -27.0), 1.1)
-env.cyl((0.15, 0, -31.5), 0.25, 0.7, "plastic_blue", segs=7, cap_mat="plastic_blue")
-env.col((-0.1, 0, -31.75), (0.4, 0.7, -31.25), "props")
+env.cyl((2.45, 0, -35.55), 0.25, 0.7, "plastic_blue", segs=7, cap_mat="plastic_blue")
+env.col((2.2, 0, -35.8), (2.7, 0.7, -35.3), "props")
 for k in range(5):  # dry leaves blown along the lane
     env.quad((rng.uniform(-0.8, 0.3), 0.008, rng.uniform(-30, -34.5)), (0.5, 0, 0), (0, 0, -0.5), "leaves_clump@cut", uv="fit")
 
@@ -64,7 +64,7 @@ with env.at(SC):
     env.box((-1.25, 0, -1.25), (1.25, H0, 1.25), "brick", mats={"+y": "concrete_dark"}, skip=("-y",))
     env.box((-0.6, 0, 1.25), (0.6, 0.17, 1.55), "concrete", skip=("-y", "-z"), tint=(0.8, 0.8, 0.78))
     env.col((-1.25, 0, -1.25), (1.25, H0, 1.25), "floor")
-    env.col_ramp((0, 0, 1.75), (0, H0, 1.2), 1.2, cat="stairs")
+    env.col_ramp((0, 0, 1.85), (0, H0 + 0.01, 1.27), 1.2, cat="stairs")
     old = (0.62, 0.58, 0.5)
     env.box((-1.1, H0, -1.15), (1.1, 2.3, -0.95), "wall_yellow", tint=old)
     for sx in (-1, 1):
@@ -126,8 +126,8 @@ with env.at(SC):
                 env.box((-0.004, 0, -0.004), (0.004, 0.2, 0.004), "wood_dark", skip=("-y",))
     env.card((0, 1.75, -0.94), 0.8, 0.5, "altar", rect=(0.15, 0.15, 0.85, 0.85))
     # outdoor stone incense urn in front
-    env.cyl((0, 0, 1.95), 0.24, 0.45, "concrete", segs=7, r_top=0.3, cap_mat="incense_ash", tint=(0.7, 0.7, 0.68))
-    env.col((-0.3, 0, 1.65), (0.3, 0.45, 2.25), "props")
+    env.cyl((0, 0, 3.0), 0.24, 0.45, "concrete", segs=7, r_top=0.3, cap_mat="incense_ash", tint=(0.7, 0.7, 0.68))
+    env.col((-0.3, 0, 2.7), (0.3, 0.45, 3.3), "props")
     # fallen joss paper on the plinth and the ground
     for k in range(14):
         on_plinth = k < 6
@@ -140,7 +140,7 @@ env.marker("incense_bowl", (SC[0], 1.28, SC[2] - 0.63), yaw=0)
 env.marker("shrine_lamp", (SC[0] - 0.45, 1.25, SC[2] - 0.62), yaw=0)
 env.marker("photo_frame", (SC[0] + 0.42, 1.3, SC[2] - 0.68), yaw=0)
 env.marker("shrine_altar", (SC[0], 0.35, SC[2] + 0.3), yaw=0)
-env.marker("shrine_front", (SC[0], 0.0, SC[2] + 2.0), yaw=0)
+env.marker("shrine_front", (SC[0], 0.0, SC[2] + 2.2), yaw=0)
 
 # ================================================================== THE streetlight (old, slightly bent), behind-right of the shrine
 BASE = (2.55, 0.0, -40.55)
