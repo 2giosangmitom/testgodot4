@@ -198,12 +198,12 @@ def small_tree(env, pos, h=4.0, scale=1.0):
     with env.at(pos, scale=scale):
         env.cyl((0, 0, 0), 0.14, h * 0.6, "bark", segs=5, r_top=0.09, caps=(False, False))
         for k, (yy, s) in enumerate([(h * 0.55, 2.4), (h * 0.75, 2.0), (h * 0.95, 1.4)]):
-            env.cross_cards((0, yy, 0), s, s * 0.8, "leaves@cut", n=2, yaw=25 * k)
+            env.cross_cards((0, yy, 0), s, s * 0.8, "leaves_clump@cut", n=2, yaw=25 * k)
             with env.at((0, yy - 0.1, 0), pitch=-90):
-                env.quad((-s / 2, -s / 2, 0), (s, 0, 0), (0, s, 0), "leaves@cut", uv="fit")
+                env.quad((-s / 2, -s / 2, 0), (s, 0, 0), (0, s, 0), "leaves_clump@cut", uv="fit")
 
 
-def banyan(env, pos, scale=1.0, rng=None, cloth=True):
+def banyan(env, pos, scale=1.0, rng=None, cloth=True, canopy_min=0.0):
     """Giant banyan (cây đa): thick fluted trunk, root flares, leaning limbs, aerial roots and a
     broad canopy of leaf cards. ~12 m wide, ~11 m tall at scale 1."""
     rng = rng or random.Random(42)
@@ -231,20 +231,20 @@ def banyan(env, pos, scale=1.0, rng=None, cloth=True):
                 top = 4.2 + ln * t * 0.55
                 env.cyl((x, 0, z), 0.06, top, "bark", segs=4, r_top=0.03, caps=(False, False))
         # canopy: layered horizontal + upright leaf cards
-        for k in range(16):
+        for k in range(24):
             a = rng.uniform(0, math.tau)
             r = rng.uniform(0.5, 5.5)
             x, z = math.sin(a) * r, math.cos(a) * r
-            y = rng.uniform(6.0, 10.0) - r * 0.25
+            y = max(canopy_min, rng.uniform(6.0, 10.0) - r * 0.25)
             s = rng.uniform(3.5, 5.0)
             with env.at((x, y, z), yaw=rng.uniform(0, 360), pitch=-90 + rng.uniform(-25, 25)):
-                env.quad((-s / 2, -s / 2, 0), (s, 0, 0), (0, s, 0), "leaves@cut", uv="fit", rect=(0, 0, 2, 2))
-        for k in range(10):
+                env.quad((-s / 2, -s / 2, 0), (s, 0, 0), (0, s, 0), "leaves_clump@cut", uv="fit")
+        for k in range(14):
             a = rng.uniform(0, math.tau)
             r = rng.uniform(2.0, 5.5)
             x, z = math.sin(a) * r, math.cos(a) * r
-            env.cross_cards((x, rng.uniform(5.5, 8.5), z), rng.uniform(3, 4.5), rng.uniform(2.5, 3.5), "leaves@cut",
-                            n=2, yaw=rng.uniform(0, 90), rect=(0, 0, 2, 1.5))
+            env.cross_cards((x, max(canopy_min + 0.5, rng.uniform(5.5, 8.5)), z), rng.uniform(3, 4.5), rng.uniform(2.5, 3.5), "leaves_clump@cut",
+                            n=2, yaw=rng.uniform(0, 90))
         if cloth:  # red cloth tied around the sacred tree
             env.cyl((0, 1.2, 0), 1.13, 0.22, "lacquer_red", segs=9, r_top=1.11, caps=(False, False))
     env.col((pos[0] - 0.9 * scale, 0, pos[2] - 0.9 * scale), (pos[0] + 0.9 * scale, 4.0, pos[2] + 0.9 * scale), "props")

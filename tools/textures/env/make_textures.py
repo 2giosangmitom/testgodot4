@@ -818,6 +818,30 @@ def t_leaves():
     finish(rgb, "leaves", colors=16, alpha=a)
 
 
+def t_leaves_clump():
+    """Non-tiling foliage clump for tree canopy cards: dense centre, ragged transparent edge."""
+    s = 128; rng = rng_for("leaves_clump")
+    big = s * 2
+    rgb = Image.new("RGB", (big, big), (20, 36, 18)); a = Image.new("L", (big, big), 0)
+    d = ImageDraw.Draw(rgb); da = ImageDraw.Draw(a)
+    for _ in range(900):
+        ang0 = rng.uniform(0, math.tau)
+        rr = abs(rng.normal(0, 0.27)) * big
+        x, y = big / 2 + math.cos(ang0) * rr, big / 2 + math.sin(ang0) * rr * 0.8
+        if not (0 < x < big and 0 < y < big):
+            continue
+        r = rng.uniform(5, 10); ang = rng.uniform(0, math.pi * 2)
+        shade_v = 0.55 + 0.9 * (1 - y / big) * rng.uniform(0.6, 1.1)
+        c = tuple(int(min(255, v)) for v in np.array([30, 62, 26]) * shade_v)
+        pts = [(x + math.cos(ang) * r * 1.6, y + math.sin(ang) * r * 1.6),
+               (x + math.cos(ang + 1.7) * r * 0.6, y + math.sin(ang + 1.7) * r * 0.6),
+               (x - math.cos(ang) * r * 0.6, y - math.sin(ang) * r * 0.6),
+               (x + math.cos(ang - 1.7) * r * 0.6, y + math.sin(ang - 1.7) * r * 0.6)]
+        d.polygon(pts, fill=c); da.polygon(pts, fill=255)
+    rgb = rgb.resize((s, s), Image.Resampling.NEAREST); a = a.resize((s, s), Image.Resampling.BOX)
+    finish(rgb, "leaves_clump", colors=12, alpha=a)
+
+
 def t_grass_dirt():
     s = 128; rng = rng_for("grass_dirt")
     n = fbm(s, s, rng, base=4, octaves=5); w = white(s, s, rng)
@@ -1079,7 +1103,7 @@ def main():
     t_railing("railing"); t_railing("iron_gate")
     t_shutter("shutter_grey", "8c9090"); t_shutter("shutter_green", "5a7a6a"); t_shutter("shutter_blue", "5a6a8a", ads=False)
     t_chalkboard(); t_desk_wood(); t_shelf_metal(); t_fridge_back()
-    t_signs(); t_posters(); t_roof_tiles(); t_lacquer_red(); t_altar(); t_bark(); t_leaves()
+    t_signs(); t_posters(); t_roof_tiles(); t_lacquer_red(); t_altar(); t_bark(); t_leaves(); t_leaves_clump()
     t_grass_dirt(); t_cables(); t_ceiling_panel(); t_emissive(); t_window_bars(); t_incense_ash(); t_misc()
     for n, sz, a in sorted(WRITTEN):
         print(f"{n:18s} {sz[0]}x{sz[1]} {a}")
