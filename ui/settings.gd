@@ -10,6 +10,7 @@ signal closed
 const BUSES := [["Master", "Âm lượng chung"], ["Music", "Nhạc"], ["Amb", "Môi trường"], ["SFX", "Hiệu ứng"], ["Voice", "Lồng tiếng"]]
 
 var _first: Control
+var _panel: PanelContainer
 
 static func apply_saved() -> void:
 	for b in BUSES:
@@ -42,9 +43,10 @@ func _ready() -> void:
 	panel.custom_minimum_size = Vector2(440, 0)
 	panel.offset_left = -220
 	panel.offset_right = 220
-	panel.offset_top = -190
-	panel.offset_bottom = 190
+	panel.offset_top = -150
+	panel.offset_bottom = 150
 	add_child(panel)
+	_panel = panel
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 2)
 	panel.add_child(v)
@@ -81,9 +83,15 @@ func _ready() -> void:
 	var c := CenterContainer.new()
 	c.add_child(back)
 	v.add_child(c)
+	_fit.call_deferred()
 	visibility_changed.connect(func():
 		if visible and _first:
 			_first.grab_focus.call_deferred())
+
+func _fit() -> void:
+	var h := _panel.get_combined_minimum_size().y
+	_panel.offset_top = -roundf(h / 2)
+	_panel.offset_bottom = roundf(h / 2)
 
 func open() -> void:
 	visible = true

@@ -201,6 +201,14 @@ func run_demo(demo: String) -> void:
 			await player.look_at_point(door.global_position + Vector3(0.45, 1.5, 0), 1.5)
 		"dead":
 			player.kill("test")
+		"pickup":
+			player.teleport(Transform3D(Basis(Vector3.UP, -PI / 2), Vector3(1.6, 0, -1.4)))
+			player._pitch = deg_to_rad(-35)
+			await get_tree().create_timer(0.3).timeout
+			player._do_interact()
+		"prompt":
+			player.teleport(Transform3D(Basis(), Vector3(0.0, 0, -3.8)))
+			player.stamina = 45.0
 		"flash":
 			player.set_flashlight(true)
 			player.teleport(Transform3D(Basis(), Vector3(0, 0, -6)))
