@@ -1,0 +1,87 @@
+{
+	"ch2_hanh_01": {
+		"speaker": "chi_quan_ly",
+		"text": "Hôm qua có gì lạ không em? ...Thôi, không có thì tốt.",
+		"fx": "none"
+	},
+	"ch2_hanh_02": {
+		"speaker": "chi_quan_ly",
+		"text": "Vào kho dọn giúp chị cái ngăn kéo cũ, đồ của thằng Tuấn để lại ấy. Vứt được thì vứt.",
+		"fx": "none"
+	},
+	"ch2_nam_01": {
+		"speaker": "nam",
+		"text": "Tuấn... Người này... đêm qua đứng ngoài kia.",
+		"fx": "none"
+	},
+	"ch2_hanh_03": {
+		"speaker": "chi_quan_ly",
+		"text": "Tuấn hả? Nó ở ngay trong ngõ, dãy trọ của em đấy. Tự dưng nghỉ, gọi không nghe máy.",
+		"fx": "none"
+	},
+	"ch2_linh_01": {
+		"speaker": "linh",
+		"text": "Ơ Nam! Tớ đi ngang qua. Tối nay tớ qua trọ trả cậu quyển vở nhé, tầm mười một giờ.",
+		"fx": "none"
+	},
+	"ch2_nam_02": {
+		"speaker": "nam",
+		"text": "Ừ, nhưng khuya thế có sao không?",
+		"fx": "none"
+	},
+	"ch2_linh_02": {
+		"speaker": "linh",
+		"text": "Không sao, nhà tớ ngay phố bên mà. Thôi tớ đi đây.",
+		"fx": "none"
+	},
+	"ch2_mimic_hung_01": {
+		"speaker": "hung",
+		"text": "Nam ơi! Mở cửa, tao Hùng đây. Tao quên chìa khóa.",
+		"fx": "door"
+	},
+	"ch2_nam_03": {
+		"speaker": "nam",
+		"text": "(Hùng? Nó bảo về quê cơ mà...)",
+		"fx": "none"
+	},
+	"ch2_mimic_hung_02": {
+		"speaker": "hung",
+		"text": "Nam. Tao biết mày ở trong đấy. Đèn còn sáng kìa.",
+		"fx": "door"
+	},
+	"ch2_mimic_hung_03": {
+		"speaker": "hung",
+		"text": "Mở cửa đi. Ngoài này lạnh lắm. Lạnh lắm Nam ạ.",
+		"fx": "door"
+	},
+	"ch2_mimic_hung_04": {
+		"speaker": "hung",
+		"text": "Sao mày không trả lời tao?",
+		"fx": "door"
+	},
+	"ch2_mimic_hung_05": {
+		"speaker": "hung",
+		"text": "Mày... không... trả lời... tao...",
+		"fx": "entity"
+	},
+	"ch2_nam_04": {
+		"speaker": "nam",
+		"text": "Lại mất điện. Cầu dao ở dưới tầng trệt...",
+		"fx": "none"
+	},
+	"ch2_mimic_linh_01": {
+		"speaker": "linh",
+		"text": "Nam ơi... tớ mang vở trả cậu này...",
+		"fx": "entity"
+	},
+	"ch2_mimic_linh_02": {
+		"speaker": "linh",
+		"text": "Sao cậu không nhìn tớ?",
+		"fx": "entity"
+	},
+	"ch2_nam_05": {
+		"speaker": "nam",
+		"text": "Mình cần biết chuyện gì đang xảy ra ở cái ngõ này.",
+		"fx": "none"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"ch4_tuan_01": {
+		"speaker": "???",
+		"text": "Ca đêm... dài lắm... đúng không...",
+		"fx": "entity"
+	},
+	"ch4_tuan_02": {
+		"speaker": "???",
+		"text": "Đến lượt... ai trông đèn...",
+		"fx": "entity"
+	},
+	"ch4_nam_01": {
+		"speaker": "nam",
+		"text": "Anh Tuấn. Em thắp lại đèn cho anh rồi. Anh về đi.",
+		"fx": "none"
+	}
+}

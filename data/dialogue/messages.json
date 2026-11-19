@@ -1,3 +1,86 @@
 {
-	"m_test_01": {"from": "hung", "time": "21:00", "text": "Tin nhắn thử nghiệm.", "chapter": 0}
+	"m_ch1_hung_01": {
+		"from": "hung",
+		"time": "16:45",
+		"text": "Tối nay tao đá bóng với hội lớp, về muộn. Mày đi làm nhớ mang chìa khóa nhé.",
+		"chapter": 1
+	},
+	"m_ch1_me_01": {
+		"from": "me",
+		"time": "16:50",
+		"text": "Con ơi đi làm đêm nhớ ăn uống đầy đủ. Có gì gọi mẹ.",
+		"chapter": 1
+	},
+	"m_ch1_hanh_01": {
+		"from": "chi_quan_ly",
+		"time": "04:31",
+		"text": "Ca đầu ổn không em? 5h có bạn ca sáng tới. Về thì đi cửa sau cho gần.",
+		"chapter": 1
+	},
+	"m_ch2_hung_01": {
+		"from": "hung",
+		"time": "18:20",
+		"text": "Mày ơi tao phải về quê gấp, bà tao ốm nặng. Chắc 3-4 hôm nữa mới lên. Tối khóa cửa cẩn thận nhé, chìa tao cầm theo rồi.",
+		"chapter": 2
+	},
+	"m_ch2_linh_01": {
+		"from": "linh",
+		"time": "22:05",
+		"text": "Nam ơi tớ xin lỗi, mẹ tớ không cho đi khuya. Mai tớ đưa vở trên lớp nhé. Đừng mở cửa cho ai đấy hihi.",
+		"chapter": 2
+	},
+	"m_ch2_fake_01": {
+		"from": "hung",
+		"time": "23:41",
+		"text": "mo cua cho tao di. tao dung ngoai cua roi",
+		"chapter": 2
+	},
+	"m_ch2_hung_02": {
+		"from": "hung",
+		"time": "23:42",
+		"text": "Ơ tao đang ở viện với bà mà, ai nhắn từ máy tao thế?? Mày đừng mở cửa nhé Nam",
+		"chapter": 2
+	},
+	"m_ch3_hanh_01": {
+		"from": "chi_quan_ly",
+		"time": "15:10",
+		"text": "Tối nay cửa hàng đóng cửa sửa điện nhé em, nghỉ một hôm.",
+		"chapter": 3
+	},
+	"m_ch3_linh_01": {
+		"from": "linh",
+		"time": "15:30",
+		"text": "Tớ hỏi bà rồi! Miếu Ông Đèn muốn thắp lại phải có dầu lạc, nhang, với ảnh của người trông đèn cũ. Và phải gọi đúng tên người ta. 22h tớ đợi cậu ở cổng trường, tớ đưa sổ ghi chép của bà.",
+		"chapter": 3
+	},
+	"m_ch3_hung_01": {
+		"from": "hung",
+		"time": "15:45",
+		"text": "Bà tao đỡ rồi. Mày ổn không? Tối qua tao nằm mơ thấy mày đứng dưới cột đèn đầu ngõ, sợ vãi.",
+		"chapter": 3
+	},
+	"m_ch3_linh_02": {
+		"from": "linh",
+		"time": "22:07",
+		"text": "Tớ đứng ở cổng rồi mà không thấy cậu đâu? Cổng vắng tanh, chỉ có cái đèn đường nhấp nháy...",
+		"chapter": 3
+	},
+	"m_ch1_spam_01": {
+		"from": "radio",
+		"time": "19:02",
+		"text": "[QC] Gói cước ĐÊM VUI: lướt mạng không giới hạn từ 0h đến 6h chỉ 5.000đ!",
+		"chapter": 1
+	},
+	"m_ch2_me_01": {
+		"from": "me",
+		"time": "20:15",
+		"text": "Mẹ gửi ít giò chả lên theo xe khách, mai con ra bến lấy nhé.",
+		"chapter": 2
+	},
+	"m_ch4_unknown_01": {
+		"from": "???",
+		"time": "03:03",
+		"text": "đèn tắt rồi nam ơi",
+		"chapter": 4
+	}
 }

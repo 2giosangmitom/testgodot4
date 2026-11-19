@@ -1,0 +1,112 @@
+{
+	"ch1_thay_01": {
+		"speaker": "thay_giao",
+		"text": "Tuần sau nộp bản vẽ khảo sát khu phố cũ. Nhóm nào chọn khu nào thì ghi tên lên bảng.",
+		"fx": "none"
+	},
+	"ch1_thay_02": {
+		"speaker": "thay_giao",
+		"text": "Thôi, hôm nay đến đây. Về cẩn thận, dạo này trời sương nhiều.",
+		"fx": "none"
+	},
+	"ch1_linh_01": {
+		"speaker": "linh",
+		"text": "Nam, nhóm mình chọn khu ngõ nhà cậu nhé? Tớ thấy trên bản đồ cũ cuối ngõ có một cái miếu.",
+		"fx": "none"
+	},
+	"ch1_nam_01": {
+		"speaker": "nam",
+		"text": "Miếu Ông Đèn ấy à? Bỏ hoang lâu rồi. Tớ chỉ thấy cái cột đèn đường to tướng bên cạnh.",
+		"fx": "none"
+	},
+	"ch1_linh_02": {
+		"speaker": "linh",
+		"text": "Bà tớ bảo miếu kiểu đấy ngày xưa phải giữ đèn sáng cả đêm. Đèn tắt là xui lắm.",
+		"fx": "none"
+	},
+	"ch1_nam_02": {
+		"speaker": "nam",
+		"text": "Thôi đừng dọa. Tối nay tớ bắt đầu trực ca đêm đấy.",
+		"fx": "none"
+	},
+	"ch1_linh_03": {
+		"speaker": "linh",
+		"text": "Ca đêm ở cái cửa hàng đầu ngõ á? Ừ, thế cậu cẩn thận. Có gì nhắn tớ.",
+		"fx": "none"
+	},
+	"ch1_tu_01": {
+		"speaker": "bac_bao_ve",
+		"text": "Cháu Nam đấy à. Nghe bảo cháu làm ca đêm ở cái cửa hàng đầu ngõ Đèn?",
+		"fx": "none"
+	},
+	"ch1_nam_03": {
+		"speaker": "nam",
+		"text": "Vâng, hôm nay ca đầu tiên bác ạ.",
+		"fx": "none"
+	},
+	"ch1_tu_02": {
+		"speaker": "bac_bao_ve",
+		"text": "Ừ. Bác dặn câu này: về khuya, thấy ai đứng dưới đèn đường thì đừng nhìn lâu. Cứ đi thẳng.",
+		"fx": "none"
+	},
+	"ch1_tu_03": {
+		"speaker": "bac_bao_ve",
+		"text": "Người ta đứng đấy là việc của người ta. Mình nhìn lâu là thành việc của mình.",
+		"fx": "none"
+	},
+	"ch1_hanh_01": {
+		"speaker": "chi_quan_ly",
+		"text": "Em là Nam hả? Chị là Hạnh, quản lý. Ca đêm nhàn thôi, quét mã, xếp hàng, lau sàn.",
+		"fx": "none"
+	},
+	"ch1_hanh_02": {
+		"speaker": "chi_quan_ly",
+		"text": "À, sau quầy có tờ quy tắc ca đêm. Đọc kỹ vào. Đừng hỏi chị sao lại có mấy cái quy tắc đấy.",
+		"fx": "none"
+	},
+	"ch1_hanh_03": {
+		"speaker": "chi_quan_ly",
+		"text": "Thằng trước em nghỉ ngang không báo. Em đừng có như nó nhé. Chị về đây.",
+		"fx": "none"
+	},
+	"ch1_khach_01": {
+		"speaker": "khach",
+		"text": "Cho anh bao thuốc với chai nước. Ca đêm à em? Đêm ở đây buồn lắm.",
+		"fx": "none"
+	},
+	"ch1_nam_04": {
+		"speaker": "nam",
+		"text": "Ai đứng đấy giờ này nhỉ... Thôi, làm việc tiếp.",
+		"fx": "none"
+	},
+	"ch1_nam_05": {
+		"speaker": "nam",
+		"text": "Không ngẩng lên. Không ngẩng lên...",
+		"fx": "none"
+	},
+	"ch1_bacu_01": {
+		"speaker": "ba_cu",
+		"text": "Cháu ở phòng hai linh bốn trong ngõ phải không?",
+		"fx": "none"
+	},
+	"ch1_bacu_02": {
+		"speaker": "ba_cu",
+		"text": "Phòng ấy lâu rồi không ai trông đèn. Thằng trước cháu cũng hay mua dầu ở đây.",
+		"fx": "none"
+	},
+	"ch1_bacu_03": {
+		"speaker": "ba_cu",
+		"text": "Đèn tắt thì phải có người đứng trông. Cháu nhớ lấy.",
+		"fx": "none"
+	},
+	"ch1_nam_06": {
+		"speaker": "nam",
+		"text": "Bà ơi, bà nói thế là sao ạ?",
+		"fx": "none"
+	},
+	"ch1_nam_07": {
+		"speaker": "nam",
+		"text": "Mình mệt quá rồi. Về ngủ thôi.",
+		"fx": "none"
+	}
+}

@@ -1,0 +1,32 @@
+{
+	"rules_note": {
+		"title": "QUY TẮC CA ĐÊM",
+		"text": "1. Sau 0 giờ, không ra khỏi cửa hàng vì bất cứ lý do gì.\n2. Nếu có người đứng ngoài cửa kính mà không vào, đừng nhìn họ quá lâu. Cứ làm việc tiếp.\n3. Đèn chớp tắt thì đừng ngẩng lên nhìn đèn.\n4. Khách vào sau 2 giờ sáng: tính tiền bình thường, không hỏi han.\n5. [s]Trước khi tan ca, mang dầu ra châm đèn miếu cuối ngõ.[/s]",
+		"style": "handwritten"
+	},
+	"notice_board": {
+		"title": "THÔNG BÁO",
+		"text": "Phòng 205 không cho thuê.\n\nAi biết tin anh Tuấn (người thuê cũ P.204) báo chủ nhà giúp. Đồ đạc anh Tuấn để trên gác phòng 204, đề nghị không tự ý vứt.\n\nĐóng cổng trước 23h. Tiền điện 3.800đ/số.\n— Chủ nhà",
+		"style": "printed"
+	},
+	"name_tag_store": {
+		"title": "THẺ NHÂN VIÊN",
+		"text": "TIỆN LỢI 24h ÁNH DƯƠNG\n\nHọ tên: TRẦN VĂN TUẤN\nVị trí: Nhân viên ca đêm\n\n(Ảnh thẻ mờ. Gương mặt này... đêm qua đứng ngoài cửa kính.)",
+		"style": "card"
+	},
+	"old_photo": {
+		"title": "TẤM ẢNH CŨ",
+		"text": "Miếu Ông Đèn, ngọn đèn dầu còn sáng. Một chàng trai mặc đồng phục cam đứng cạnh một bà cụ.\n\nSau ảnh ghi: \"Tuấn và bà Sáu — nhớ châm dầu mỗi sáng\".",
+		"style": "photo"
+	},
+	"missing_poster": {
+		"title": "TÌM NGƯỜI MẤT TÍCH",
+		"text": "TRẦN VĂN TUẤN, sinh viên năm 4.\nMất tích từ đêm 14 tháng trước, lần cuối được thấy ở ngõ Đèn.\nAi biết tin xin liên hệ phòng Công tác sinh viên.",
+		"style": "printed"
+	},
+	"linh_notebook": {
+		"title": "SỔ GHI CHÉP CỦA BÀ LINH",
+		"text": "Miếu Ông Đèn: đèn dầu phải cháy từ chập tối đến sáng.\nĐèn tắt, thứ đứng chờ trong sương sẽ vào ngõ, và phải có người đứng trông thay.\nMuốn thắp lại: dầu lạc, nhang, ảnh người trông đèn cũ, và gọi đúng tên người ấy.",
+		"style": "handwritten"
+	}
+}

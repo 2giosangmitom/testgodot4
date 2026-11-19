@@ -1,0 +1,27 @@
+{
+	"endA_tuan_01": {
+		"speaker": "???",
+		"text": "Cảm ơn em. Từ giờ... để đèn trông.",
+		"fx": "far"
+	},
+	"endA_tuan_02": {
+		"speaker": "???",
+		"text": "Nhớ châm dầu... mỗi sáng tan ca nhé.",
+		"fx": "far"
+	},
+	"endA_hung_01": {
+		"speaker": "hung",
+		"text": "Ê! Mày làm gì ngoài này sớm thế? Mặt mày như người mất ngủ ba đêm.",
+		"fx": "none"
+	},
+	"endA_nam_01": {
+		"speaker": "nam",
+		"text": "Ừ... ca đêm dài lắm. Mà xong rồi.",
+		"fx": "none"
+	},
+	"endA_hung_02": {
+		"speaker": "hung",
+		"text": "Đi ăn phở không? Tao bao.",
+		"fx": "none"
+	}
+}
