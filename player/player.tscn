@@ -1,0 +1,65 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://player/player.gd" id="1_player"]
+
+[sub_resource type="CapsuleShape3D" id="cap"]
+radius = 0.3
+height = 1.75
+
+[sub_resource type="SphereShape3D" id="probe"]
+radius = 0.25
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 5
+floor_max_angle = 0.872665
+floor_snap_length = 0.3
+script = ExtResource("1_player")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
+shape = SubResource("cap")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+current = true
+fov = 70.0
+near = 0.05
+far = 120.0
+
+[node name="InteractRay" type="RayCast3D" parent="Head/Camera3D"]
+target_position = Vector3(0, 0, -2)
+collision_mask = 37
+
+[node name="HoldPoint" type="Node3D" parent="Head/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, -0.16, -0.5)
+
+[node name="Flashlight" type="SpotLight3D" parent="Head/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, -0.12, 0)
+visible = false
+light_color = Color(1, 0.88, 0.7, 1)
+light_energy = 1.2
+light_specular = 0.1
+spot_range = 7.0
+spot_attenuation = 1.2
+spot_angle = 26.0
+spot_angle_attenuation = 0.7
+
+[node name="PhoneLight" type="OmniLight3D" parent="Head/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, -0.25, -0.3)
+visible = false
+light_color = Color(0.7, 0.85, 1, 1)
+light_energy = 0.35
+light_specular = 0.0
+omni_range = 1.6
+
+[node name="HideProbe" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+collision_layer = 0
+collision_mask = 17
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HideProbe"]
+shape = SubResource("probe")

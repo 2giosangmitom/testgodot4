@@ -1,0 +1,126 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/VT323-Regular.ttf" id="1_font"]
+
+[sub_resource type="StyleBoxFlat" id="sb_panel"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.03, 0.03, 0.035, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.32, 0.3, 0.26, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="sb_btn_normal"]
+content_margin_left = 10.0
+content_margin_top = 1.0
+content_margin_right = 10.0
+content_margin_bottom = 1.0
+bg_color = Color(0, 0, 0, 0)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="sb_btn_hover"]
+content_margin_left = 10.0
+content_margin_top = 1.0
+content_margin_right = 10.0
+content_margin_bottom = 1.0
+bg_color = Color(0.55, 0.3, 0.08, 0.35)
+border_width_left = 2
+border_color = Color(1, 0.62, 0.25, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="sb_btn_pressed"]
+content_margin_left = 10.0
+content_margin_top = 1.0
+content_margin_right = 10.0
+content_margin_bottom = 1.0
+bg_color = Color(0.75, 0.42, 0.12, 0.55)
+border_width_left = 2
+border_color = Color(1, 0.75, 0.4, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxEmpty" id="sb_empty"]
+
+[sub_resource type="StyleBoxFlat" id="sb_slider"]
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.2, 0.19, 0.17, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="sb_slider_fill"]
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(1, 0.62, 0.25, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="sb_bar_bg"]
+bg_color = Color(0, 0, 0, 0.5)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="sb_bar_fill"]
+bg_color = Color(0.85, 0.82, 0.72, 0.85)
+anti_aliasing = false
+
+[sub_resource type="Image" id="img_grabber"]
+data = {
+"data": PackedByteArray(255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255, 255, 200, 120, 255),
+"format": "RGBA8",
+"height": 6,
+"mipmaps": false,
+"width": 4
+}
+
+[sub_resource type="ImageTexture" id="tex_grabber"]
+image = SubResource("img_grabber")
+
+[resource]
+default_font = ExtResource("1_font")
+default_font_size = 16
+Button/colors/font_color = Color(0.82, 0.8, 0.74, 1)
+Button/colors/font_hover_color = Color(1, 0.8, 0.5, 1)
+Button/colors/font_focus_color = Color(1, 0.8, 0.5, 1)
+Button/colors/font_pressed_color = Color(1, 0.9, 0.7, 1)
+Button/colors/font_hover_pressed_color = Color(1, 0.9, 0.7, 1)
+Button/colors/font_disabled_color = Color(0.4, 0.39, 0.36, 1)
+Button/font_sizes/font_size = 20
+Button/styles/normal = SubResource("sb_btn_normal")
+Button/styles/hover = SubResource("sb_btn_hover")
+Button/styles/focus = SubResource("sb_btn_hover")
+Button/styles/pressed = SubResource("sb_btn_pressed")
+Button/styles/hover_pressed = SubResource("sb_btn_pressed")
+Button/styles/disabled = SubResource("sb_btn_normal")
+CheckButton/colors/font_color = Color(0.82, 0.8, 0.74, 1)
+CheckButton/colors/font_hover_color = Color(1, 0.8, 0.5, 1)
+CheckButton/colors/font_focus_color = Color(1, 0.8, 0.5, 1)
+CheckButton/colors/font_pressed_color = Color(0.82, 0.8, 0.74, 1)
+CheckButton/font_sizes/font_size = 18
+CheckButton/styles/normal = SubResource("sb_btn_normal")
+CheckButton/styles/hover = SubResource("sb_btn_hover")
+CheckButton/styles/focus = SubResource("sb_btn_hover")
+CheckButton/styles/pressed = SubResource("sb_btn_normal")
+CheckButton/styles/hover_pressed = SubResource("sb_btn_hover")
+HSlider/icons/grabber = SubResource("tex_grabber")
+HSlider/icons/grabber_highlight = SubResource("tex_grabber")
+HSlider/styles/slider = SubResource("sb_slider")
+HSlider/styles/grabber_area = SubResource("sb_slider_fill")
+HSlider/styles/grabber_area_highlight = SubResource("sb_slider_fill")
+Label/colors/font_color = Color(0.86, 0.84, 0.78, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 0.9)
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 1
+Label/font_sizes/font_size = 16
+Panel/styles/panel = SubResource("sb_panel")
+PanelContainer/styles/panel = SubResource("sb_panel")
+ProgressBar/styles/background = SubResource("sb_bar_bg")
+ProgressBar/styles/fill = SubResource("sb_bar_fill")
+RichTextLabel/colors/default_color = Color(0.86, 0.84, 0.78, 1)
+RichTextLabel/colors/font_shadow_color = Color(0, 0, 0, 0.9)
+RichTextLabel/constants/shadow_offset_x = 1
+RichTextLabel/constants/shadow_offset_y = 1
+RichTextLabel/font_sizes/normal_font_size = 16
+RichTextLabel/styles/normal = SubResource("sb_empty")
+RichTextLabel/styles/focus = SubResource("sb_empty")
