@@ -4,7 +4,9 @@ extends CharacterBody3D
 ## surface detection, interaction raycast, item holding, flashlight, forced look, death.
 ## Public API: see docs/conventions.md ("Player").
 
-signal held_item_rotated(item: Node3D)
+## RMB held + mouse while holding an item: mouse motion in pixels. Camera look is suppressed.
+## Items that listen rotate themselves; with no listener the player rotates the item.
+signal held_item_rotated(relative: Vector2)
 signal died(cause: String)
 
 const HUD_SCENE := "res://ui/hud.tscn"
@@ -53,6 +55,7 @@ var _target: Node = null
 var _last_prompt := "__none__"
 var _held: Node3D = null
 var _held_info := {}
+var _hold_tween: Tween
 var _flicker_t := 0.0
 var _flicker_frames := 0
 var _shake_t := 0.0
@@ -185,9 +188,11 @@ func hold_item(node: Node3D) -> void:
 	else:
 		hold_point.add_child(node)
 	var offset: Vector3 = node.get_meta("hold_offset", Vector3.ZERO)
-	var t := create_tween().set_parallel().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	t.tween_property(node, "position", offset, 0.25)
-	t.tween_property(node, "quaternion", Quaternion.IDENTITY, 0.25)
+	if _hold_tween:
+		_hold_tween.kill()
+	_hold_tween = create_tween().set_parallel().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_hold_tween.tween_property(node, "position", offset, 0.25)
+	_hold_tween.tween_property(node, "quaternion", Quaternion.IDENTITY, 0.25)
 	AudioDirector.play_sfx("item_pickup", -4.0)
 
 ## Puts the held item back into its original parent where it is now (dropped in front of the
@@ -198,6 +203,8 @@ func release_item() -> Node3D:
 		return null
 	var node := _held
 	_held = null
+	if _hold_tween:
+		_hold_tween.kill()
 	var parent: Node = _held_info.get("parent")
 	if parent == null or not is_instance_valid(parent):
 		parent = get_tree().current_scene
@@ -311,11 +318,13 @@ func _unhandled_input(event: InputEvent) -> void:
 func _rotate_held(rel: Vector2) -> void:
 	var k := 0.012
 	var cb := cam.global_transform.basis
+	held_item_rotated.emit(rel)
+	if not held_item_rotated.get_connections().is_empty():
+		return
 	var gb := _held.global_transform.basis
 	gb = Basis(cb.y, rel.x * k) * gb
 	gb = Basis(cb.x, rel.y * k) * gb
 	_held.global_transform.basis = gb.orthonormalized()
-	held_item_rotated.emit(_held)
 
 func _do_interact() -> void:
 	if _target and is_instance_valid(_target):

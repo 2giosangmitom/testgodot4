@@ -21,10 +21,16 @@ extends Interactable
 @export var prompt_open := "Mở cửa"
 @export var prompt_close := "Đóng cửa"
 @export var prompt_locked := "Khóa"
+## force_open() swing side: 0 = away from the player, +1 / -1 = fixed side (local +Z / -Z).
+@export_range(-1, 1) var force_open_sign := 0
 ## Emit noise when opened (Crowd/entities hear it).
 @export var noise := 0.25
 
 var is_open := false
+## Read-only alias of is_open for duck-typed callers (`"open" in door`).
+var open: bool:
+	get:
+		return is_open
 var moving := false
 var _closed_yaw := 0.0
 var _angle := 0.0          # current swing in degrees (+ = towards local -Z)
@@ -93,12 +99,32 @@ func _on_interact(player: Node3D) -> void:
 	elif locked:
 		AudioDirector.play_sfx_3d("door_handle_rattle", _handle_pos())
 	else:
-		open(player.global_position if player else Vector3.INF)
+		open_door(player.global_position if player else Vector3.INF)
+
+func is_locked() -> bool:
+	return locked
 
 ## Opens away from `from_pos` (world). Pass Vector3.INF to use the default (+ angle).
-func open(from_pos := Vector3.INF, duration := -1.0) -> void:
+## (Not called `open` so duck-typed code can read the `open` bool alias.)
+func open_door(from_pos := Vector3.INF, duration := -1.0) -> void:
 	if locked or is_open:
 		return
+	_open_away_from(from_pos, open_time if duration < 0.0 else duration)
+
+## Entity breach / scripted: opens slowly IGNORING `locked` (the lock is broken open).
+## Swings away from the player unless `force_open_sign` is set (+1 / -1).
+func force_open(duration := 2.0) -> void:
+	if is_open and not moving:
+		return
+	locked = false
+	var from := Vector3.INF
+	if force_open_sign == 0 and GameState.player and is_instance_valid(GameState.player):
+		from = GameState.player.global_position
+	elif force_open_sign != 0:
+		from = _closed_xform() * Vector3(0, 0, float(force_open_sign))
+	_open_away_from(from, duration)
+
+func _open_away_from(from_pos: Vector3, duration: float) -> void:
 	var dir := 1.0
 	if from_pos != Vector3.INF:
 		var local := _closed_xform().affine_inverse() * from_pos
@@ -107,7 +133,7 @@ func open(from_pos := Vector3.INF, duration := -1.0) -> void:
 	if noise > 0.0:
 		EventBus.noise_emitted.emit(global_position, noise)
 	_set_open_state(true)
-	_swing_to(open_angle * dir, open_time if duration < 0.0 else duration, Tween.EASE_IN_OUT)
+	_swing_to(open_angle * dir, duration, Tween.EASE_IN_OUT)
 
 func close(duration := -1.0) -> void:
 	if not is_open and is_zero_approx(_angle):
@@ -129,12 +155,14 @@ func lock() -> void:
 	if locked:
 		return
 	locked = true
+	EventBus.door_state_changed.emit(door_id, is_open)
 	AudioDirector.play_sfx_3d("door_lock", _handle_pos())
 
 func unlock() -> void:
 	if not locked:
 		return
 	locked = false
+	EventBus.door_state_changed.emit(door_id, is_open)
 	AudioDirector.play_sfx_3d("door_unlock", _handle_pos())
 
 func set_locked(on: bool) -> void:
@@ -147,7 +175,8 @@ func set_locked(on: bool) -> void:
 func set_open_instant(open_state: bool, angle := 95.0) -> void:
 	if _tween:
 		_tween.kill()
-	is_open = open_state
+	moving = false
+	_set_open_state(open_state)
 	_apply_angle(angle if open_state else 0.0)
 
 func _set_open_state(o: bool) -> void:
