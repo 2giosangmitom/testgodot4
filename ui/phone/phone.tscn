@@ -3,5 +3,5 @@
 [ext_resource type="Script" path="res://ui/phone/phone.gd" id="1_phone"]
 
 [node name="Phone" type="CanvasLayer"]
-layer = 45
+layer = 95
 script = ExtResource("1_phone")

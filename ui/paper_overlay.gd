@@ -9,25 +9,34 @@ const SCENE := "res://ui/paper_overlay.tscn"
 
 var title := ""
 var body := ""
+var style := "printed"
+
+const STYLES := {
+	"printed": {"bg": Color(0.8, 0.77, 0.68), "ink": Color(0.1, 0.09, 0.08), "border": Color(0.45, 0.42, 0.35), "rot": 0.0},
+	"handwritten": {"bg": Color(0.76, 0.72, 0.56), "ink": Color(0.12, 0.14, 0.32), "border": Color(0.5, 0.45, 0.3), "rot": 0.0},
+	"card": {"bg": Color(0.88, 0.86, 0.82), "ink": Color(0.1, 0.1, 0.12), "border": Color(0.85, 0.45, 0.12), "rot": 0.0},
+	"photo": {"bg": Color(0.86, 0.84, 0.78), "ink": Color(0.2, 0.18, 0.16), "border": Color(0.95, 0.94, 0.9), "rot": 0.0},
+}
 var _opened_ms := 0
 var root: Control
 
-static func show_paper(tree: SceneTree, p_title: String, p_body: String) -> PaperOverlay:
+static func show_paper(tree: SceneTree, p_title: String, p_body: String, p_style := "printed") -> PaperOverlay:
 	var o: PaperOverlay = load(SCENE).instantiate()
 	o.title = p_title
 	o.body = p_body
+	o.style = p_style
 	tree.root.add_child(o)
 	return o
 
 func _ready() -> void:
-	layer = 60
+	layer = 105
 	_opened_ms = Time.get_ticks_msec()
 	GameState.lock_input("paper")
 	EventBus.interact_prompt.emit("")
 	AudioDirector.play_sfx("page_turn", -4.0)
 	root = Control.new()
 	root.theme = preload("res://ui/theme.tres")
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_to_group("ui_cursor")
 	root.gui_input.connect(func(e: InputEvent):
 		if e is InputEventMouseButton and e.pressed:
@@ -35,14 +44,15 @@ func _ready() -> void:
 	add_child(root)
 	var dim := ColorRect.new()
 	dim.color = Color(0, 0, 0, 0.7)
-	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	dim.mouse_filter = Control.MOUSE_FILTER_PASS
 	root.add_child(dim)
+	var st: Dictionary = STYLES.get(style, STYLES.printed)
 	var paper := PanelContainer.new()
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.78, 0.74, 0.62)
-	sb.set_border_width_all(1)
-	sb.border_color = Color(0.45, 0.4, 0.3)
+	sb.bg_color = st.bg
+	sb.set_border_width_all(4 if style == "photo" else (3 if style == "card" else 1))
+	sb.border_color = st.border
 	sb.set_content_margin_all(14)
 	sb.content_margin_left = 18
 	sb.content_margin_right = 18
@@ -56,7 +66,8 @@ func _ready() -> void:
 	paper.offset_right = 190
 	paper.offset_top = -170
 	paper.offset_bottom = 150
-	paper.rotation_degrees = -1.0
+	paper.rotation_degrees = st.rot
+	paper.pivot_offset = Vector2(190, 160)
 	paper.mouse_filter = Control.MOUSE_FILTER_PASS
 	root.add_child(paper)
 	var v := VBoxContainer.new()
@@ -66,7 +77,7 @@ func _ready() -> void:
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	t.add_theme_font_size_override("font_size", 24)
-	t.add_theme_color_override("font_color", Color(0.15, 0.1, 0.08))
+	t.add_theme_color_override("font_color", st.ink)
 	t.add_theme_constant_override("shadow_offset_x", 0)
 	t.add_theme_constant_override("shadow_offset_y", 0)
 	t.visible = title != ""
@@ -77,7 +88,7 @@ func _ready() -> void:
 	rt.fit_content = true
 	rt.scroll_active = true
 	rt.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	rt.add_theme_color_override("default_color", Color(0.12, 0.1, 0.09))
+	rt.add_theme_color_override("default_color", st.ink)
 	rt.add_theme_constant_override("shadow_offset_x", 0)
 	rt.add_theme_constant_override("shadow_offset_y", 0)
 	rt.add_theme_font_size_override("normal_font_size", 18)

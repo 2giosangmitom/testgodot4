@@ -8,14 +8,14 @@ var rect: ColorRect
 var _tween: Tween
 
 func _init() -> void:
-	layer = 90
+	layer = 120
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 func _ready() -> void:
 	rect = ColorRect.new()
 	rect.color = Color.BLACK
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(rect)
 	var start_black: bool = ChapterDirector.get("transitioning") == true
 	rect.modulate.a = 1.0 if start_black else 0.0

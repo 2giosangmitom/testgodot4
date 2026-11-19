@@ -47,13 +47,13 @@ var _last_objective_text := ""
 var _last_objective_ms := 0
 
 func _ready() -> void:
-	layer = 50
+	layer = 100
 	add_to_group("hud")
 	root = Control.new()
 	root.name = "Root"
 	root.theme = THEME
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	_build_letterbox()
 	_build_crosshair()
@@ -145,6 +145,7 @@ func _build_subtitles() -> void:
 	sub_label.scroll_active = false
 	sub_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sub_label.add_theme_font_size_override("normal_font_size", 18)
+	sub_label.custom_minimum_size = Vector2(520, 0)
 	sub_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	sub_panel.add_child(sub_label)
 	sub_panel.visible = false
@@ -168,6 +169,7 @@ func _build_choices() -> void:
 	choice_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	choice_prompt.add_theme_font_size_override("font_size", 18)
 	choice_prompt.add_theme_color_override("font_color", ACCENT)
+	choice_prompt.custom_minimum_size = Vector2(340, 0)
 	v.add_child(choice_prompt)
 	choice_list = VBoxContainer.new()
 	choice_list.add_theme_constant_override("separation", 0)
@@ -182,8 +184,8 @@ func _build_letterbox() -> void:
 		r.color = Color.BLACK
 		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		root.add_child(r)
-	lb_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	lb_bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	lb_top.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	lb_bottom.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	lb_top.offset_bottom = 0
 	lb_bottom.offset_top = 0
 
@@ -250,7 +252,21 @@ func show_subtitle(speaker: String, text: String, duration: float) -> void:
 	_sub_active = true
 	sub_label.visible_characters = _sub_prefix
 	sub_panel.visible = true
-	sub_panel.reset_size()
+	_fit_bottom.call_deferred()
+
+func _fit_bottom() -> void:
+	# keep the box anchored to the bottom and exactly as tall as its (fully revealed) text
+	await get_tree().process_frame
+	var vc := sub_label.visible_characters
+	sub_label.visible_characters = -1
+	var h := clampi(sub_label.get_content_height(), 18, 140) + 12
+	sub_label.visible_characters = vc
+	sub_panel.offset_top = sub_panel.offset_bottom - h
+	sub_panel.size.y = h
+
+func _fit_choice() -> void:
+	var h := choice_panel.get_combined_minimum_size().y
+	choice_panel.offset_bottom = choice_panel.offset_top + h
 
 func clear_subtitle() -> void:
 	_sub_active = false
@@ -282,7 +298,7 @@ func show_choice(prompt: String, options: PackedStringArray) -> void:
 		b.mouse_entered.connect(b.grab_focus)
 		choice_list.add_child(b)
 	choice_panel.visible = true
-	choice_panel.reset_size()
+	_fit_choice.call_deferred()
 	AudioDirector.play_sfx("ui_move", -8.0)
 
 func _pick(i: int) -> void:
@@ -347,8 +363,8 @@ class Crosshair extends Control:
 			queue_redraw()
 	func _draw() -> void:
 		var c := Color(0.9, 0.88, 0.8, 0.75 + 0.25 * k)
-		var s := 1.0 + round(k * 1.0)
+		var s := 1.0 + roundf(k)
 		draw_rect(Rect2(Vector2(-s, -s), Vector2(s * 2, s * 2)), c)
 		if k > 0.05:
-			var r := round(3.0 + 3.0 * k)
+			var r := roundf(3.0 + 3.0 * k)
 			draw_rect(Rect2(Vector2(-r, -r), Vector2(r * 2, r * 2)), Color(c, k * 0.7), false, 1.0)

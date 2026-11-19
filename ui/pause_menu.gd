@@ -9,16 +9,16 @@ var settings: SettingsMenu
 var _buttons: Array[Button] = []
 
 func _ready() -> void:
-	layer = 80
+	layer = 130
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	root = Control.new()
 	root.theme = preload("res://ui/theme.tres")
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_to_group("ui_cursor")
 	add_child(root)
 	var dim := ColorRect.new()
 	dim.color = Color(0, 0, 0, 0.6)
-	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_child(dim)
 	menu = VBoxContainer.new()
 	menu.set_anchors_preset(Control.PRESET_CENTER)
@@ -85,6 +85,10 @@ func _open_settings() -> void:
 
 func _to_main_menu() -> void:
 	get_tree().paused = false
+	GameState.phone_open = false
+	if ChapterDirector.has_method("return_to_menu"):
+		ChapterDirector.return_to_menu()
+		return
 	var ch = ChapterDirector.get("current_chapter")
 	if ch and is_instance_valid(ch):
 		ch.queue_free()

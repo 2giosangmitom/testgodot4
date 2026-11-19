@@ -32,6 +32,12 @@ func _has_child_of(cls: String) -> bool:
 			return true
 	return false
 
+func _has_flicker(light: Node) -> bool:
+	for c in light.get_children():
+		if c.has_method("flicker") and c.has_method("set_on"):
+			return true
+	return false
+
 func get_prompt() -> String:
 	if not enabled:
 		return ""
@@ -46,7 +52,8 @@ func set_on(on: bool, play_sound := true) -> void:
 		AudioDirector.play_sfx_3d("light_switch", global_position, -2.0)
 	if light_group == "":
 		return
+	# Lights driven by render/flicker_light.gd react to lights_set themselves; toggle plain ones.
 	for n in get_tree().get_nodes_in_group(light_group):
-		if n is Light3D:
+		if n is Light3D and not _has_flicker(n):
 			n.visible = on
 	EventBus.lights_set.emit(light_group, on)

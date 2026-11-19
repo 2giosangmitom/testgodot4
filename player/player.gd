@@ -57,7 +57,7 @@ var _flicker_t := 0.0
 var _flicker_frames := 0
 var _shake_t := 0.0
 var _shake_str := 0.0
-var _rotating_item := false
+var _capture_frame := 0
 
 @onready var col: CollisionShape3D = $Collision
 @onready var head: Node3D = $Head
@@ -268,6 +268,7 @@ func _capture_mouse(on: bool) -> void:
 	if DisplayServer.get_name() == "headless":
 		return
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if on else Input.MOUSE_MODE_VISIBLE
+	_capture_frame = Engine.get_process_frames()
 
 func _ui_wants_cursor() -> bool:
 	for n in get_tree().get_nodes_in_group("ui_cursor"):
@@ -280,6 +281,9 @@ func _look_allowed() -> bool:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		# ignore the warp jump right after the mouse gets captured
+		if Engine.get_process_frames() - _capture_frame < 4 or event.relative.length() > 250.0:
+			return
 		var sens: float = float(SaveSystem.get_setting("mouse_sens", 0.12))
 		if _held and Input.is_action_pressed("secondary") and can_control():
 			_rotate_held(event.relative)
