@@ -1,0 +1,52 @@
+{
+	"ch3_nam_01": {
+		"speaker": "nam",
+		"text": "Đường gì mà vắng thế này... Họ đứng im như tượng.",
+		"fx": "none"
+	},
+	"ch3_nam_02": {
+		"speaker": "nam",
+		"text": "Đi chậm thôi. Đừng chạy. Đừng để họ nghe thấy.",
+		"fx": "none"
+	},
+	"ch3_nam_03": {
+		"speaker": "nam",
+		"text": "Mình cũng đang đứng ở cổng mà...",
+		"fx": "none"
+	},
+	"ch3_tu_01": {
+		"speaker": "bac_bao_ve",
+		"text": "Nam đấy à? Đêm nay đừng ra đường. Cả phố đi vào sương hết rồi.",
+		"fx": "none"
+	},
+	"ch3_tu_02": {
+		"speaker": "bac_bao_ve",
+		"text": "Cháu hỏi miếu Ông Đèn hả... Ngày bác còn trẻ, đêm nào bà Sáu cũng châm đèn. Bà mất, thằng Tuấn trọ trong ngõ nhận châm thay.",
+		"fx": "none"
+	},
+	"ch3_tu_03": {
+		"speaker": "bac_bao_ve",
+		"text": "Rồi một đêm nó quên. Đèn tắt. Sáng ra người ta thấy nó đứng dưới cột đèn đường, mắt mở trừng trừng. Rồi nó biến mất.",
+		"fx": "none"
+	},
+	"ch3_tu_04": {
+		"speaker": "bac_bao_ve",
+		"text": "Đèn tắt thì phải có người đứng trông. Lệ nó thế. Giờ nó đứng trông, nhưng nó cũng đang tìm người thay.",
+		"fx": "none"
+	},
+	"ch3_tu_05": {
+		"speaker": "bac_bao_ve",
+		"text": "Đây, chai dầu lạc bác vẫn để dành. Nhang thì ở tạp hóa bà Sáu bên kia đường, cửa không khóa đâu.",
+		"fx": "none"
+	},
+	"ch3_nam_04": {
+		"speaker": "nam",
+		"text": "Trần Văn Tuấn. Khóa trên mình hai năm... Mất tích từ tháng trước.",
+		"fx": "none"
+	},
+	"ch3_nam_05": {
+		"speaker": "nam",
+		"text": "Họ đang nhìn về phía ngõ nhà mình.",
+		"fx": "none"
+	}
+}
