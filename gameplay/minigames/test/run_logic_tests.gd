@@ -13,6 +13,7 @@ var _fails := 0
 var _passes := 0
 var _cur := ""
 var _cur_ok := true
+var _cur_end := false
 var _toasts: Array[String] = []
 var _completed_ids: Array[String] = []
 
@@ -32,11 +33,15 @@ func _run() -> void:
 	for t in tests:
 		_cur = t
 		_cur_ok = true
+		_cur_end = false
 		gs.reset()
 		gs.debug_autoplay = false
 		_toasts.clear()
 		_completed_ids.clear()
 		await call(t)
+		if not _cur_end:
+			_cur_ok = false
+			print("   test aborted before its end (script error?) [%s]" % t)
 		_cleanup()
 		await process_frame
 		if _cur_ok:
@@ -98,6 +103,7 @@ func test_util() -> void:
 	_check(U.axis_vector("+X") == Vector3(1, 0, 0), "+X")
 	_check(U.axis_vector("-y") == Vector3(0, -1, 0), "-y")
 	_check(U.axis_vector("") == Vector3(0, 0, 1), "default +Z")
+	_cur_end = true
 
 func test_barcode_axis_meta() -> void:
 	# A fake "glb" model whose child mesh carries barcode_axis metadata and is rotated 90° (Y).
@@ -129,6 +135,7 @@ func test_barcode_axis_meta() -> void:
 	var h3 := Node3D.new()
 	_container.add_child(h3)
 	_check(plain.build_visual(h3).is_equal_approx(Vector3(0, 0, 1)), "default +Z")
+	_cur_end = true
 
 func test_checkout() -> void:
 	var a := _setup_scene("res://gameplay/minigames/checkout/checkout.tscn")
@@ -189,6 +196,7 @@ func test_checkout() -> void:
 	_check("checkout" in _completed_ids, "EventBus.minigame_completed(checkout)")
 	await _wait_until(func(): return cust_done[0], 4.0)
 	_check(cust_done[0], "customer_done emitted")
+	_cur_end = true
 
 func test_shelf_stock() -> void:
 	var a := _setup_scene("res://gameplay/minigames/shelf_stock/shelf_stock.tscn")
@@ -236,6 +244,7 @@ func test_shelf_stock() -> void:
 	_check(mg.is_completed(), "completed")
 	_check(not mg.box.is_held(), "box released at the end")
 	_check("shelf_stock" in _completed_ids, "EventBus.minigame_completed(shelf_stock)")
+	_cur_end = true
 
 func test_mop() -> void:
 	var a := _setup_scene("res://gameplay/minigames/mop/mop.tscn")
@@ -265,6 +274,7 @@ func test_mop() -> void:
 	_check(haunted[0] == 1, "haunted only once")
 	_check(mg.is_completed(), "completed after cleaning all")
 	_check(not mg.mop.is_held(), "mop released")
+	_cur_end = true
 
 func _scrub_stain(mg, pl: Node3D, idx: int) -> void:
 	var c: Vector3 = (mg.stains[idx].node as Node3D).global_position
@@ -316,6 +326,7 @@ func test_noodles() -> void:
 	mg._knob.interact(pl)
 	_check(mg.is_completed(), "completed after turning off")
 	_check(not mg.stove_on, "stove off")
+	_cur_end = true
 
 func test_noodles_order() -> void:
 	# turning the stove off mid-way pauses heating; it is still completable.
@@ -341,6 +352,7 @@ func test_noodles_order() -> void:
 	mg.toggle_stove()
 	_check(mg.is_completed(), "completed")
 	_check(not mg.did_boil_over, "no boil over")
+	_cur_end = true
 
 func test_room_routine() -> void:
 	_container = Node3D.new()
@@ -369,7 +381,7 @@ func test_room_routine() -> void:
 	var bed = rr.get_part("go_to_sleep")
 	_check(sw and lock and bed, "parts by id")
 	bed.fade_time = 0.05
-	var bed_btn: Interactable = bed.get_node("BedButton")
+	var bed_btn: Node = bed.get_node("BedButton")
 	bed_btn.interact(pl)
 	_check(not bed.is_completed(), "bed refuses before chores")
 	_check(_toasts.size() > 0 and _toasts[-1].contains("Chưa tắt đèn") and _toasts[-1].contains("Chưa khóa cửa"), "bed hint: " + (_toasts[-1] if _toasts.size() else ""))
@@ -392,6 +404,7 @@ func test_room_routine() -> void:
 	for id in ["lamp_switch_off", "check_door_lock", "go_to_sleep", "room_routine"]:
 		_check(id in _completed_ids, "minigame_completed(%s)" % id)
 	bus.lights_set.disconnect(cb)
+	_cur_end = true
 
 func test_autoplay_all() -> void:
 	gs.debug_autoplay = true
@@ -432,3 +445,4 @@ func test_autoplay_all() -> void:
 		_check(mg.is_completed(), "autoplay completed " + mg.minigame_id)
 	_check(ok, "all autoplay done in time")
 	gs.debug_autoplay = false
+	_cur_end = true
