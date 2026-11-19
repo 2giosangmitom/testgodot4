@@ -29,6 +29,10 @@ func _ready() -> void:
 	GameState.set_clock(23, 47)
 	GameState.chapter = 2
 	DebugShot.attach_if_requested(self)
+	if DebugShot.get_arg("lowres") != "":
+		# preview of the proposed extreme mode: 3D at half res (nearest), UI stays 640x480
+		get_viewport().scaling_3d_mode = Viewport.SCALING_3D_MODE_NEAREST
+		get_viewport().scaling_3d_scale = 0.5
 	var demo := DebugShot.get_arg("demo")
 	if demo != "":
 		await get_tree().create_timer(0.3).timeout

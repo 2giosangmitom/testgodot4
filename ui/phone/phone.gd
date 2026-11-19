@@ -279,9 +279,12 @@ func _move(d: int) -> void:
 		if scroll:
 			scroll.scroll_vertical += d * 12
 		return
-	if items.is_empty():
+	var count := _threads().size() if view == View.THREADS else items.size()
+	if count == 0:
 		return
-	sel = wrapi(sel + d, 0, items.size())
+	sel = wrapi(sel + d, 0, count)
+	if view == View.THREADS:
+		_refresh()   # list scrolls with the selection
 	AudioDirector.play_sfx("phone_tap", -12.0)
 	_highlight()
 
@@ -489,11 +492,10 @@ func _view_threads() -> void:
 	var threads := _threads()
 	if threads.is_empty():
 		_label("(Không có tin nhắn)", 14, DIM, Vector2(4, 20), SCREEN.x - 8)
-	for i in threads.size():
+	var first := clampi(sel - 3, 0, maxi(threads.size() - 4, 0))
+	for i in range(first, mini(first + 4, threads.size())):
 		var th: Dictionary = threads[i]
-		var y := 17 + i * 30
-		if y > content.size.y - 28:
-			break
+		var y := 17 + (i - first) * 30
 		var row := _row(Vector2(1, y), Vector2(SCREEN.x - 2, 29), i)
 		var name := Label.new()
 		name.text = th.name
@@ -502,7 +504,7 @@ func _view_threads() -> void:
 		name.add_theme_constant_override("shadow_offset_x", 0)
 		name.add_theme_constant_override("shadow_offset_y", 0)
 		name.position = Vector2(3, -1)
-		name.size = Vector2(SCREEN.x - 42, 14)
+		name.size = Vector2(SCREEN.x - 48, 14)
 		name.clip_text = true
 		row.add_child(name)
 		var last := Dialogue.get_message(th.ids[-1])
@@ -524,8 +526,8 @@ func _view_threads() -> void:
 		tm.add_theme_constant_override("shadow_offset_x", 0)
 		tm.add_theme_constant_override("shadow_offset_y", 0)
 		tm.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		tm.position = Vector2(SCREEN.x - 36, 0)
-		tm.size = Vector2(28, 12)
+		tm.size = Vector2(30, 12)
+		tm.position = Vector2(SCREEN.x - 9 - maxf(tm.get_minimum_size().x, 30), 0)
 		row.add_child(tm)
 		if th.unread > 0:
 			var dot := ColorRect.new()
@@ -590,12 +592,13 @@ func _row(pos: Vector2, size: Vector2, index: int) -> Control:
 			sel = index
 			_activate())
 	content.add_child(row)
+	row.set_meta("idx", index)
 	items.append(row)
 	return row
 
 func _highlight() -> void:
-	for i in items.size():
-		(items[i] as ColorRect).color = Color(HOLO, 0.35) if i == sel else Color(0, 0, 0, 0)
+	for r in items:
+		(r as ColorRect).color = Color(HOLO, 0.35) if r.get_meta("idx", -1) == sel else Color(0, 0, 0, 0)
 
 # ------------------------------------------------------------------ notifications
 func _on_message(msg_id: String) -> void:
