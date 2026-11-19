@@ -58,6 +58,8 @@ var _flicker_frames := 0
 var _shake_t := 0.0
 var _shake_str := 0.0
 var _capture_frame := 0
+## Screenshot runs (-- --shot=...) ignore the real mouse so shots are deterministic.
+var _ignore_mouse := "--shot" in " ".join(OS.get_cmdline_user_args())
 
 @onready var col: CollisionShape3D = $Collision
 @onready var head: Node3D = $Head
@@ -282,7 +284,7 @@ func _look_allowed() -> bool:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		# ignore the warp jump right after the mouse gets captured
-		if Engine.get_process_frames() - _capture_frame < 4 or event.relative.length() > 250.0:
+		if Engine.get_process_frames() - _capture_frame < 4 or event.relative.length() > 250.0 or _ignore_mouse:
 			return
 		var sens: float = float(SaveSystem.get_setting("mouse_sens", 0.12))
 		if _held and Input.is_action_pressed("secondary") and can_control():

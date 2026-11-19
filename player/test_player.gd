@@ -33,6 +33,8 @@ func _ready() -> void:
 	if demo != "":
 		await get_tree().create_timer(0.3).timeout
 		run_demo(demo)
+		await get_tree().create_timer(1.2).timeout
+		print("DEMO STATE door_open=%s door_angle=%.1f hidden=%s crouch=%s held=%s flags=%s" % [door.is_open, door._angle, player.is_hidden(), player.is_crouching(), player.get_held_item(), GameState.flags])
 
 func _build_room() -> void:
 	var gray := Color(0.55, 0.55, 0.53)
@@ -64,7 +66,10 @@ func _build_room() -> void:
 		for z in [-0.34, 0.34]:
 			ProtoGeo.box(table, Vector3(0.06, 0.72, 0.06), Vector3(x, 0.36, z), Color(0.3, 0.22, 0.15))
 	var hide: HideSpot = HIDE.instantiate()
-	hide.size = Vector3(1.2, 0.7, 0.7)
+	# crouched eye height is 0.9 m (above a 0.75 m desk), so the volume covers the desk's
+	# footprint plus the knee space in front of it
+	hide.size = Vector3(1.4, 1.0, 1.5)
+	hide.position = Vector3(0, 0, 0.35)
 	table.add_child(hide)
 	var can: PickupItem = PICKUP.instantiate()
 	can.item_id = "can"
@@ -191,7 +196,7 @@ func run_demo(demo: String) -> void:
 			EventBus.letterbox.emit(true)
 			EventBus.subtitle.emit("Bác Tư bảo vệ", "Cháu về muộn thế. Đi đường cẩn thận nhé.", 3.0)
 		"hide":
-			player.teleport(Transform3D(Basis(Vector3.UP, PI / 2), Vector3(2.6, 0, -0.6)))
+			player.teleport(Transform3D(Basis(Vector3.UP, PI), Vector3(2.6, 0, -0.55)))
 			player._crouch_toggled = true
 		"door":
 			player.teleport(Transform3D(Basis(), Vector3(0.1, 0, -3.6)))
@@ -203,7 +208,7 @@ func run_demo(demo: String) -> void:
 			player.kill("test")
 		"pickup":
 			player.teleport(Transform3D(Basis(Vector3.UP, -PI / 2), Vector3(1.6, 0, -1.4)))
-			player._pitch = deg_to_rad(-35)
+			player._pitch = deg_to_rad(-46)
 			await get_tree().create_timer(0.3).timeout
 			player._do_interact()
 		"prompt":
