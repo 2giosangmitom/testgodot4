@@ -13,7 +13,7 @@ from mathutils import Vector
 argv = sys.argv[sys.argv.index("--") + 1:]
 out = argv.pop(0)
 opts = {"anim": None, "frame": 0, "cols": 99, "spacing": 0.8, "res": "640x480", "angle": 20.0, "key": None,
-        "height": None, "ortho": None}
+        "height": None, "ortho": None, "elev": 4.0}
 files = []
 i = 0
 while i < len(argv):
@@ -112,7 +112,7 @@ H = float(opts["height"]) if opts["height"] else maxh * 0.55
 cam_data.ortho_scale = max(width * 1.1, maxh * 1.2 * w / h * (1 + 0.6 * (rows - 1)))
 if opts.get("ortho"):
     cam_data.ortho_scale = float(opts["ortho"])
-cam.location = Vector((cx + math.sin(ang) * 20, -math.cos(ang) * 20 + (rows - 1) * sp * 0.8, H + 4.0))
+cam.location = Vector((cx + math.sin(ang) * 20, -math.cos(ang) * 20 + (rows - 1) * sp * 0.8, H + float(opts["elev"])))
 direction = Vector((cx, (rows - 1) * sp * 0.8, H)) - cam.location
 cam.rotation_euler = direction.to_track_quat("-Z", "Y").to_euler()
 scn.render.filepath = out
