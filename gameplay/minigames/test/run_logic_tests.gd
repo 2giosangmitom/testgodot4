@@ -27,7 +27,7 @@ func _run() -> void:
 	bus.toast.connect(func(t): _toasts.append(t))
 	bus.minigame_completed.connect(func(id): _completed_ids.append(id))
 	var tests := [
-		"test_util", "test_barcode_axis_meta", "test_checkout", "test_shelf_stock", "test_mop",
+		"test_util", "test_barcode_axis_meta", "test_barcode_real_glb", "test_checkout", "test_shelf_stock", "test_mop",
 		"test_noodles", "test_noodles_order", "test_room_routine", "test_autoplay_all",
 	]
 	for t in tests:
@@ -135,6 +135,22 @@ func test_barcode_axis_meta() -> void:
 	var h3 := Node3D.new()
 	_container.add_child(h3)
 	_check(plain.build_visual(h3).is_equal_approx(Vector3(0, 0, 1)), "default +Z")
+	_cur_end = true
+
+func test_barcode_real_glb() -> void:
+	# Real Track C2 prop: barcode is on the back face = Godot -Z, stored in glTF "extras".
+	var ps: PackedScene = load("res://assets/models/props/can_tra_xanh.glb")
+	_check(ps != null, "can_tra_xanh.glb loads")
+	if ps:
+		var P = load("res://gameplay/minigames/minigame_product.gd")
+		var prod = P.new()
+		prod.model = ps
+		_container = Node3D.new()
+		root.add_child(_container)
+		var holder := Node3D.new()
+		_container.add_child(holder)
+		var axis: Vector3 = prod.build_visual(holder)
+		_check(axis.is_equal_approx(Vector3(0, 0, -1)), "real glb barcode axis from extras -> %s" % axis)
 	_cur_end = true
 
 func test_checkout() -> void:

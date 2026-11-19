@@ -41,6 +41,10 @@ static func find_barcode_axis(node: Node, relative_to: Node3D) -> Vector3:
 		if n.has_meta("barcode_axis"):
 			found = n
 			axis_str = str(n.get_meta("barcode_axis"))
+		elif n.has_meta("extras") and n.get_meta("extras") is Dictionary and n.get_meta("extras").has("barcode_axis"):
+			# glTF custom properties imported by Godot live in the "extras" meta dictionary.
+			found = n
+			axis_str = str(n.get_meta("extras")["barcode_axis"])
 		elif "barcode_axis" in n and typeof(n.get("barcode_axis")) == TYPE_STRING and n.get("barcode_axis") != "":
 			found = n
 			axis_str = n.get("barcode_axis")
