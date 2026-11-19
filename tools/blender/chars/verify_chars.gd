@@ -11,7 +11,11 @@ const REQUIRED_SHAPES := ["neck_tilt", "long_arms", "face_distort"]
 
 
 func _init() -> void:
-	var ok := true
+	_run.call_deferred()
+
+
+func _run() -> void:
+	var ok := _check_runtime()
 	for n in NAMES:
 		var path := "res://assets/models/chars/%s.glb" % n
 		var ps: PackedScene = load(path)
@@ -68,3 +72,22 @@ func _init() -> void:
 		inst.free()
 	print("VERIFY_CHARS ", "OK" if ok else "FAILED")
 	quit(0 if ok else 1)
+
+
+## Plays head_turn_left on nam in the tree and checks the head bone actually rotates (tracks bind).
+func _check_runtime() -> bool:
+	var inst: Node3D = (load("res://assets/models/chars/nam.glb") as PackedScene).instantiate()
+	root.add_child(inst)
+	var ap: AnimationPlayer = inst.find_child("AnimationPlayer", true, false)
+	var sk: Skeleton3D = inst.find_children("*", "Skeleton3D", true, false)[0]
+	var head := sk.find_bone("head")
+	ap.play("head_turn_left")
+	ap.advance(0.75)
+	var q := sk.get_bone_pose_rotation(head)
+	var yaw := rad_to_deg(q.get_euler().y)
+	ap.play("sit")
+	ap.advance(0.1)
+	var hips_y := sk.get_bone_pose_position(sk.find_bone("hips")).y
+	print("runtime: head yaw after head_turn_left = %.1f deg (expect ~ +52, toward +X), hips y in sit = %.2f" % [yaw, hips_y])
+	inst.queue_free()
+	return absf(yaw) > 30.0
