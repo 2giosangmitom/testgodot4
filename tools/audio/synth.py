@@ -1414,7 +1414,8 @@ def _render_lofi(name, bpm, bars, chords, mel_scale, drum_cfg, lp, wow, crk, luf
     ml = np.zeros(n, np.float32)
     if mel_scale:
         melody(ml, bar, bars, mel_scale, rng, vel=0.3, density=mel)
-    x = 0.55 * _norm(keys) + 0.35 * _norm(bass) + (0.45 * _norm(dr) if drum_cfg else 0) + (0.22 * _norm(ml) if mel_scale else 0)
+    dr = filt(dr, SR, hp=55, circular=True) if drum_cfg else dr
+    x = 0.6 * _norm(keys) + 0.22 * _norm(bass) + (0.4 * _norm(dr) if drum_cfg else 0) + (0.22 * _norm(ml) if mel_scale else 0)
     x = reverb(x, SR, 1.6, 0.18, lp=3000, circular=True)
     return lofi_master(x, lp=lp, wow=wow, crackle_lv=crk, rng=rng, lufs=lufs)
 
@@ -1455,9 +1456,10 @@ def music_tension(name):
     for i in range(int(n / e)):
         acc = 1.0 if i % 8 in (0, 3, 6) else 0.55
         m = N(beat * 0.45)
-        x = (osc(mtof(28), m, "saw") + osc(mtof(40, -10), m, "saw") * 0.4) * adsr(m, 0.005, 0.08, 0.3, 0.05) * acc
+        x = (osc(mtof(28), m, "saw") * 0.6 + osc(mtof(40, -10), m, "saw") * 0.7 + osc(mtof(52, -10), m, "saw") * 0.25) \
+            * adsr(m, 0.005, 0.08, 0.3, 0.05) * acc
         place(pulse, x, i * e)
-    pulse = filt(pulse, SR, lp=420, order=2, circular=True)
+    pulse = filt(pulse, SR, hp=45, lp=900, order=2, circular=True)
     drone = pad_saw([mtof(28), mtof(29, -20)], n, rng, voices=3, detune=0.15, lp=300) * (0.7 + 0.3 * lfo(n, bars // 2))
     strings = pad_saw([mtof(64), mtof(65, -25), mtof(71, -10)], n, rng, voices=3, detune=0.2, lp=2200)
     strings *= smooth_rand(n, rng, 6) ** 2
@@ -1468,7 +1470,7 @@ def music_tension(name):
     tick = np.zeros(n, np.float32)
     for i in range(bars * 16):
         place(tick, hat(0.15 if i % 4 else 0.3, rng), N(i * beat / 4))
-    x = 0.6 * _norm(pulse) + 0.5 * _norm(drone) + 0.22 * _norm(strings) + 0.45 * _norm(hb) + 0.12 * _norm(tick)
+    x = 0.6 * _norm(pulse) + 0.35 * _norm(drone) + 0.3 * _norm(strings) + 0.35 * _norm(hb) + 0.12 * _norm(tick)
     x = reverb(x, SR, 2.0, 0.2, lp=2500, circular=True)
     return lofi_master(x, lp=3500, wow=1.5, crackle_lv=0.02, rng=rng, lufs=-19)
 
