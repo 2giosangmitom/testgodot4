@@ -48,12 +48,20 @@ static func is_observed(cam_xform: Transform3D, fov_deg: float, aspect: float, p
 		return true
 	return false
 
-## Current fog far distance from the PSX shader globals (fallback when headless / unset).
+## Current fog far distance. RenderingServer.global_shader_parameter_get() is editor-only at
+## runtime, so ask RenderSettings: get_fog_far() if it exists, else its current preset's "far".
 static func fog_visible_distance(fallback := DEFAULT_FOG_FAR) -> float:
-	var v = RenderingServer.global_shader_parameter_get("psx_fog_far")
-	if v == null:
+	var ml := Engine.get_main_loop() as SceneTree
+	var rs: Node = ml.root.get_node_or_null("RenderSettings") if ml else null
+	if rs == null:
 		return fallback
-	return float(v)
+	if rs.has_method("get_fog_far"):
+		return float(rs.get_fog_far())
+	var presets = rs.get("FOG_PRESETS")
+	var cur = rs.get("current_preset")
+	if presets is Dictionary and presets.has(cur):
+		return float(presets[cur].get("far", fallback))
+	return fallback
 
 ## Is a collider see-through (glass)? Group or metadata `see_through`.
 static func is_see_through(collider: Object) -> bool:

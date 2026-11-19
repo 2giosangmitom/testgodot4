@@ -15,6 +15,8 @@ var sprinting := false
 var pitch := 0.0
 var _noise_t := 0.0
 var _look_tween: Tween
+var _shake := 0.0
+var _shake_t := 0.0
 
 @onready var cam: Camera3D = $Camera3D
 @onready var flashlight: SpotLight3D = $Camera3D/Flashlight
@@ -27,6 +29,7 @@ func _ready() -> void:
 	collision_layer = 2
 	collision_mask = 1
 	flashlight.visible = false
+	EventBus.camera_shake.connect(_on_camera_shake)
 	EventBus.player_spawned.emit(self)
 
 func get_camera() -> Camera3D:
@@ -75,6 +78,20 @@ func look_at_point(pos: Vector3, duration := 0.3) -> void:
 	_look_tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	_look_tween.tween_property(self, "rotation:y", yaw, duration)
 	_look_tween.tween_method(func(v: float): pitch = v; cam.rotation.x = v, pitch, p, duration)
+
+func _on_camera_shake(strength: float, duration: float) -> void:
+	_shake = maxf(_shake, strength)
+	_shake_t = maxf(_shake_t, duration)
+
+func _process(delta: float) -> void:
+	if _shake_t > 0.0:
+		_shake_t -= delta
+		cam.h_offset = randf_range(-1, 1) * 0.06 * _shake
+		cam.v_offset = randf_range(-1, 1) * 0.06 * _shake
+		if _shake_t <= 0.0:
+			_shake = 0.0
+			cam.h_offset = 0.0
+			cam.v_offset = 0.0
 
 func _can_control() -> bool:
 	return controls_enabled and not GameState.is_input_locked()

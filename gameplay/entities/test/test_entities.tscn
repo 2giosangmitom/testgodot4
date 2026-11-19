@@ -1,0 +1,115 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://gameplay/entities/test/test_entities.gd" id="1"]
+[ext_resource type="PackedScene" path="res://gameplay/entities/test/stand_in_player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://gameplay/entities/gazer/gazer.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://gameplay/entities/mimic/mimic.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://gameplay/entities/crowd/crowd_group.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://gameplay/entities/crowd/crowd_member.tscn" id="6"]
+[ext_resource type="Script" path="res://gameplay/entities/test/stand_in_door.gd" id="7"]
+[ext_resource type="Script" path="res://gameplay/entities/entity_director.gd" id="8"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_door"]
+size = Vector3(0.9, 2.1, 0.06)
+
+[node name="TestEntities" type="Node3D"]
+script = ExtResource("1")
+
+[node name="StandInPlayer" parent="." instance=ExtResource("2")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, -3)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="G0" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 11.5)
+
+[node name="G1" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 8)
+
+[node name="G2" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0, 4.2)
+
+[node name="G3" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 0.45)
+
+[node name="H0" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 6)
+
+[node name="H1" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, 5.5)
+
+[node name="H2" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 4)
+
+[node name="H3" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 2)
+
+[node name="H4" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+
+[node name="MimicOut" type="Marker3D" parent="Markers"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -7.3, 0, 4)
+
+[node name="MimicIn" type="Marker3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.45, 0, 4)
+
+[node name="RoomSpawn" type="Marker3D" parent="Markers"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -10.8, 0, 4)
+
+[node name="RoomDoor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 4.45)
+script = ExtResource("7")
+door_id = "test_room"
+
+[node name="Panel" type="MeshInstance3D" parent="RoomDoor"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 1.05, -0.45)
+mesh = SubResource("BoxMesh_door")
+
+[node name="Entities" type="Node3D" parent="."]
+
+[node name="GazerGlass" parent="Entities" instance=ExtResource("3")]
+entity_id = "gazer_glass"
+path_markers = Array[NodePath]([NodePath("../../Markers/G0"), NodePath("../../Markers/G1"), NodePath("../../Markers/G2"), NodePath("../../Markers/G3")])
+flicker_group = "store_lights"
+
+[node name="GazerHunt" parent="Entities" instance=ExtResource("3")]
+entity_id = "gazer_hunt"
+mode = 1
+path_markers = Array[NodePath]([NodePath("../../Markers/H0"), NodePath("../../Markers/H1"), NodePath("../../Markers/H2"), NodePath("../../Markers/H3"), NodePath("../../Markers/H4")])
+final_behind_player = true
+
+[node name="Mimic" parent="Entities" instance=ExtResource("4")]
+entity_id = "mimic_hung"
+voice_lines = Array[String](["test_01", "test_01"])
+ask_after_lines = Array[String](["test_01"])
+door_path = NodePath("../../RoomDoor")
+outside_marker = NodePath("../../Markers/MimicOut")
+inside_marker = NodePath("../../Markers/MimicIn")
+truth_message_id = "m_test_01"
+on_ignored_line = "test_01"
+flicker_group = "store_lights"
+
+[node name="BusStopCrowd" parent="Entities" instance=ExtResource("5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 10.4)
+entity_id = "crowd_bus_stop"
+
+[node name="Waiting1" parent="Entities/BusStopCrowd" instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 0)
+look_seed = 1
+
+[node name="Waiting2" parent="Entities/BusStopCrowd" instance=ExtResource("6")]
+transform = Transform3D(0.9659258, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.9659258, 0.4, 0, 0.15)
+look_seed = 2
+
+[node name="Sitting" parent="Entities/BusStopCrowd" instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0, 0.75)
+pose = "sit"
+look_seed = 3
+
+[node name="Sweeper" parent="Entities/BusStopCrowd" instance=ExtResource("6")]
+transform = Transform3D(0.8660254, 0, -0.5, 0, 1, 0, 0.5, 0, 0.8660254, 3, 0, -0.6)
+pose = "sweep"
+look_seed = 4
+
+[node name="EntityDirector" type="Node" parent="."]
+script = ExtResource("8")
