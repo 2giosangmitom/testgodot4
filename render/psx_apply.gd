@@ -11,6 +11,7 @@ extends RefCounted
 ##   "emit" / "sign" ("tube_emit") -> psx_unlit (signs, screens, tubes)
 ##   "floor" "ground" "road" "san_" -> affine_mult = floor_affine_mult (big planes warp a lot)
 ##   "face"                         -> psx_face
+##   "cut" ("fence_cut")            -> alpha scissor cutout
 ##   material unshaded             -> psx_unlit;  cull disabled -> double-sided variant
 ##   alpha scissor / hash / blend  -> alpha scissor (unless glass)
 ##   emission enabled              -> emission texture/colour/energy kept
@@ -28,6 +29,7 @@ const GLASS_KEYS := ["glass"]
 const EMIT_KEYS := ["emit", "sign"]
 const FLOOR_KEYS := ["floor", "ground", "road", "san_", "pavement", "terrain"]
 const FACE_KEYS := ["face"]
+const CUT_KEYS := ["cut"]   # "fence_cut" -> alpha scissor cutout (Track C1 naming)
 
 static var _cache: Dictionary = {}
 static var _word_re: Dictionary = {}
@@ -86,6 +88,8 @@ static func convert_material(src: Material, hint_name := "", opts := {}) -> Mate
 			BaseMaterial3D.TRANSPARENCY_ALPHA_HASH, BaseMaterial3D.TRANSPARENCY_ALPHA, \
 			BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS:
 				popts.alpha_scissor = 0.5
+		if _has_any(name, CUT_KEYS) and not popts.has("alpha_scissor"):
+			popts.alpha_scissor = 0.5
 		if m.vertex_color_use_as_albedo:
 			popts.vertex_color = true
 		if m.emission_enabled and not unlit:
