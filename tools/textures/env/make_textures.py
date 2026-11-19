@@ -590,9 +590,11 @@ def t_glass(name="glass", tint="9ab8c0", alpha=0.3, s=64):
     yy, xx = np.mgrid[0:s, 0:s]
     n = fbm(s, s, rng, base=4, octaves=3)
     arr = lerp(col(tint) * 0.8, col(tint) * 1.15, n)
-    streak = ((xx + yy) % 23 < 3).astype(float) * 0.6 + ((xx + yy) % 41 < 2) * 0.4
-    arr = lerp(arr, np.ones(3), streak * 0.5)
-    a = np.clip(alpha + 0.25 * streak + 0.1 * (n - 0.5), 0, 1)
+    streak = (((xx + yy) % s) < 3).astype(float) * 0.7 + ((((xx + yy) + s // 3) % s) < 1) * 0.4
+    smudge = np.clip((fbm(s, s, rng, base=3, octaves=2) - 0.6) * 3, 0, 1)
+    arr = lerp(arr, np.ones(3), streak * 0.4)
+    arr = lerp(arr, col("8a8a80"), smudge * 0.5)
+    a = np.clip(alpha + 0.2 * streak + 0.15 * smudge + 0.06 * (n - 0.5), 0, 1)
     finish(arr, name, colors=12, alpha=a, alpha_levels=8)
 
 
@@ -1025,7 +1027,7 @@ def t_misc():
     finish(arr, "screen", colors=6)
     # black-white checker? stove/gas: use metal_alu. mirror: glass.
     t_glass("mirror", tint="b0c4c8", alpha=0.95, s=32)
-    t_glass("glass", tint="9ab8c0", alpha=0.28, s=64)
+    t_glass("glass", tint="9ab8c0", alpha=0.16, s=64)
     t_glass("glass_dirty", tint="8a9a8a", alpha=0.45, s=64)
 
 

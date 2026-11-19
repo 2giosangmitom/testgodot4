@@ -114,13 +114,14 @@ def bulb(env, pos, name, wire=0.3, shade=True):
 
 def wall_lamp(env, pos, yaw, name):
     """Small bracket lamp on a wall: pos = wall point, lamp sticks out local +z. Returns light pos."""
+    import mathutils
     with env.at(pos, yaw=yaw):
         env.box((-0.03, -0.03, 0), (0.03, 0.03, 0.35), "metal_dark")
         env.box((-0.1, -0.08, 0.25), (0.1, 0.0, 0.45), "metal_paint", skip=("-y",))
         with env.obj(name + "_emit"):
             env.quad((-0.08, -0.081, 0.43), (0.16, 0, 0), (0, 0, -0.16), "lamp_bulb@emit", uv="fit")
-    import mathutils
-    return tuple(env.M @ mathutils.Matrix.Translation((pos[0], pos[1], pos[2])) @ mathutils.Vector((0, 0, 0)))
+        lamp = env.M @ mathutils.Vector((0, -0.2, 0.35))
+    return tuple(lamp)
 
 
 def streetlight(env, pos, yaw=0.0, name="streetlight", height=6.6, arm=1.6, tilt=0.0, tilt_roll=0.0):
@@ -133,7 +134,6 @@ def streetlight(env, pos, yaw=0.0, name="streetlight", height=6.6, arm=1.6, tilt
         # curved arm: 3 segments
         pts = [(0, height - 0.3, 0), (0, height + 0.15, -arm * 0.3), (0, height + 0.32, -arm * 0.7), (0, height + 0.35, -arm)]
         for a, b in zip(pts[:-1], pts[1:]):
-            env.box((-0.04, 0, 0), (0.04, 0.06, 0.01), "metal_paint")  # dummy tiny (keeps code simple)
             dz, dy = b[2] - a[2], b[1] - a[1]
             L = math.hypot(dz, dy)
             ang = math.degrees(math.atan2(dy, -dz))
