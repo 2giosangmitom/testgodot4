@@ -330,6 +330,24 @@ def stutter_dropout(x, sr, rng, n_stutter=2, n_drop=3):
     return y
 
 
+def whisperize(x, nfft=512, seed=7):
+    """Replace the voiced excitation with noise (keep the STFT magnitude) -> breathy whisper."""
+    rng = np.random.default_rng(seed)
+    x = np.asarray(x, np.float32)
+    hop = nfft // 4
+    win = np.hanning(nfft)
+    nfr = max(0, 1 + (len(x) - nfft) // hop)
+    out = np.zeros(len(x) + nfft, np.float32)
+    wsum = np.zeros(len(x) + nfft, np.float32)
+    for i in range(nfr):
+        fr = x[i * hop:i * hop + nfft] * win
+        mag = np.abs(np.fft.rfft(fr))
+        ph = rng.uniform(0, 2 * np.pi, len(mag))
+        out[i * hop:i * hop + nfft] += np.fft.irfft(mag * np.exp(1j * ph), nfft) * win
+        wsum[i * hop:i * hop + nfft] += win ** 2
+    return (out[:len(x)] / np.maximum(wsum[:len(x)], 1e-3)).astype(np.float32)
+
+
 # ───────────────────────────── presets ─────────────────────────────
 def apply_fx(x: np.ndarray, sr: int, fx: str, seed: int = 0, out_sr: int = 22050) -> tuple[np.ndarray, int]:
     """x: mono float32 at `sr` (any). Returns (processed, out_sr), NOT loudness-normalised."""

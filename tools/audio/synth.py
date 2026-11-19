@@ -469,22 +469,7 @@ def fridge(n, rng):
     return ((hum + whine) * wob + rattle + fan).astype(np.float32)
 
 
-def whisperize(x, nfft=512):
-    """Replace the voiced excitation with noise (keep the STFT magnitude) → breathy whisper."""
-    rng = np.random.default_rng(7)
-    hop = nfft // 4
-    win = np.hanning(nfft)
-    nfr = 1 + (len(x) - nfft) // hop
-    out = np.zeros(len(x) + nfft, np.float32)
-    wsum = np.zeros(len(x) + nfft, np.float32)
-    for i in range(nfr):
-        fr = x[i * hop:i * hop + nfft] * win
-        mag = np.abs(np.fft.rfft(fr))
-        ph = rng.uniform(0, 2 * np.pi, len(mag))
-        y = np.fft.irfft(mag * np.exp(1j * ph), nfft) * win
-        out[i * hop:i * hop + nfft] += y
-        wsum[i * hop:i * hop + nfft] += win ** 2
-    return (out[:len(x)] / np.maximum(wsum[:len(x)], 1e-3)).astype(np.float32)
+whisperize = fxc.whisperize
 
 
 # ═════════════════════════════ SFX ═════════════════════════════
@@ -1083,6 +1068,43 @@ def water_drip(name):
     return finish_sfx(reverb(x, SR, 0.9, 0.3, lp=4000, seed=21), -8, bits=11)
 
 
+@reg("sfx", "water_pour")
+def water_pour(name):
+    """Pouring into a pot: gurgling stream + bubbles, cavity resonance rising as it fills."""
+    rng = rng_for(name)
+    dur = 1.6
+    n = N(dur)
+    t = T(n)
+    stream = bandpass(rng.standard_normal(n).astype(np.float32), SR, 250, 4000, order=1)
+    gurg = filt(rng.standard_normal(n).astype(np.float32), SR, lp=25)
+    gurg = 0.6 + 0.4 * np.tanh(gurg / (np.std(gurg) + 1e-9))
+    x = stream * gurg
+    # rising cavity resonance: crossfade 4 fixed peak-EQ segments
+    segs = [peak_eq(x, SR, fc, 10, q=3) for fc in (480, 600, 760, 950)]
+    w = np.clip(t / dur * 3, 0, 3)
+    y = np.zeros(n, np.float32)
+    for i, sg in enumerate(segs):
+        y += sg * np.clip(1 - np.abs(w - i), 0, 1)
+    for _ in range(60):  # bubbles
+        m = N(rng.uniform(0.008, 0.03))
+        f0 = rng.uniform(500, 1400)
+        b = osc(f0 * np.linspace(1, 1.5, m), m) * expenv(m, 0.008)
+        place(y, b * rng.uniform(0.2, 0.8) * np.std(y) * 4, int(rng.uniform(0.05, dur - 0.1) * SR), wrap=False)
+    y *= adsr(n, 0.08, 0.3, 0.85, 0.25)
+    y = reverb(filt(y, SR, hp=150, lp=6500), SR, 0.4, 0.12, lp=4000, seed=22)
+    return finish_sfx(y, -6, bits=11, fout=0.15, trim=False)
+
+
+@reg("sfx", "buzz_wrong")
+def buzz_wrong(name):
+    n = N(0.38)
+    f = 98 * (1 - 0.04 * T(n) / 0.38)
+    x = osc(f, n, "square") + 0.8 * osc(f * 1.06, n, "square")  # beating, slightly sour
+    x = bandpass(x, SR, 120, 2400, order=2) * adsr(n, 0.004, 0.1, 0.9, 0.03)
+    x = softclip(x * 1.5, 2.0)
+    return finish_sfx(np.concatenate([x, np.zeros(N(0.02))]), -6, bits=8, trim=False)
+
+
 # ═════════════════════════════ AMBIENCE (loops) ═════════════════════════════
 def _events(n, rng, count, gen, gain=(0.5, 1.0), spread=True):
     out = np.zeros(n, np.float32)
@@ -1536,6 +1558,7 @@ SFX_LUFS = {
     "static_burst": -19, "jumpscare_sting": -13, "stinger_low": -17, "entity_whisper": -21, "glass_tap": -21,
     "motorbike_pass": -20, "dog_bark_far": -28, "match_strike": -24, "shrine_bell": -21, "wind_chime": -22,
     "water_drip": -27, "fan_click": -25, "page_turn": -26, "ui_move": -26, "ui_select": -24, "ui_back": -25,
+    "water_pour": -24, "buzz_wrong": -22,
 }
 
 

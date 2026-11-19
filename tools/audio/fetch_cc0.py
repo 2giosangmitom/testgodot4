@@ -32,10 +32,8 @@ OGA = [
                              "https://opengameart.org/sites/default/files/cooking_without_cover_01.ogg"]),
     ("breathing-tired", ["https://opengameart.org/sites/default/files/breathing%20tired.wav"]),
     ("horror-breathing", ["https://opengameart.org/sites/default/files/horrorbreathing.zip"]),
-    ("crickets-ambient-noise-loopable", ["https://opengameart.org/sites/default/files/crickets_1.mp3"]),
     ("100-cc0-metal-and-wood-sfx", ["https://opengameart.org/sites/default/files/100-CC0-wood-metal-SFX.zip"]),
     ("10-book-page-flips", ["https://opengameart.org/sites/default/files/book_flips_-_starninjas.zip"]),
-    ("heartbeat-single-sound", ["https://opengameart.org/sites/default/files/heartbeat.mp3_.flac"]),
 ]
 
 

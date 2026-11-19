@@ -31,7 +31,7 @@ sys.path.insert(0, str(HERE))
 import numpy as np  # noqa: E402
 import fx_chain as fxc  # noqa: E402
 
-PIPELINE_VERSION = "3"  # bump to force a full rebuild after fx changes
+PIPELINE_VERSION = "4"  # bump to force a full rebuild after fx changes
 # Track-D voice overrides (speaker id -> preset voice). Empty = use speakers.json as-is.
 VOICE_OVERRIDE: dict[str, str] = {}
 # Per-speaker tweaks applied before fx: (semitones pitch shift, tempo factor)
@@ -39,6 +39,8 @@ SPEAKER_TWEAK: dict[str, tuple[float, float]] = {
     "ba_cu": (0.0, 0.92),       # old woman: slower
     "bac_bao_ve": (-1.0, 0.94),  # old guard: slower, a bit lower/rougher
 }
+# Per-speaker breathiness (0..1 blend with a whispered copy) — acting notes: "Bà cụ: thì thầm"
+SPEAKER_BREATHY: dict[str, float] = {"ba_cu": 0.55}
 MIMIC_PREFIXES = ("mimic_",)
 TTS_SR = 48000
 OUT_SR = 22050
@@ -116,11 +118,30 @@ def line_hash(text, voice, fx, speaker):
 
 
 # ───────────────────────── processing ─────────────────────────
+def take_problem(audio, text) -> str | None:
+    """Heuristic QA of a raw 48 kHz take: cut-off ending or implausible speaking rate."""
+    x = np.asarray(audio, np.float32)
+    if len(x) < TTS_SR * 0.3:
+        return "too short"
+    pk = np.max(np.abs(x)) + 1e-9
+    tail = np.sqrt(np.mean(x[-int(0.08 * TTS_SR):] ** 2)) / pk
+    if tail > 0.08:
+        return f"speech still running at the end (tail {20 * np.log10(tail):.0f} dB)"
+    rate = len(re.findall(r"\w+", text)) / (len(x) / TTS_SR)
+    if rate < 1.6 or rate > 8.0:
+        return f"implausible rate {rate:.1f} syl/s"
+    return None
+
 def post(audio: np.ndarray, speaker: str, fx: str, seed: int) -> tuple[np.ndarray, int]:
     x = np.asarray(audio, np.float32)
     semis, tempo = SPEAKER_TWEAK.get(speaker, (0.0, 1.0))
     if semis or tempo != 1.0:
         x = fxc.ffilter(x, TTS_SR, f"rubberband=tempo={tempo}:pitch={2 ** (semis / 12):.5f}:pitchq=quality")
+    br = SPEAKER_BREATHY.get(speaker, 0.0)
+    if br > 0:
+        w = fxc.whisperize(x, nfft=1024, seed=seed)
+        w *= np.sqrt(np.mean(x ** 2)) / (np.sqrt(np.mean(w ** 2)) + 1e-9)
+        x = (1 - br) * x + br * fxc.filt(w, TTS_SR, hp=300, lp=7000)
     y, sr = fxc.apply_fx(x, TTS_SR, fx, seed=seed, out_sr=OUT_SR)
     y = fxc.normalize(y, sr, fxc.FX_LUFS.get(fx, -18.0), peak_db=-1.0)
     return y, sr
@@ -136,6 +157,7 @@ def main():
     ap.add_argument("--manifest", default=str(HERE / "voice_manifest.json"))
     ap.add_argument("--keep-raw", default=None, help="dir to also store the raw 48 kHz TTS wavs")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--no-batch", action="store_true", help="never use infer_batch")
     a = ap.parse_args()
 
     speakers = json.load(open(a.speakers, encoding="utf8"))
@@ -167,14 +189,26 @@ def main():
     for t in todo:
         by_voice.setdefault(t[2], []).append(t)
     t0 = time.time()
+    # infer_batch only pays off on the GPU/PyTorch engine; on CPU/ONNX it is sequential anyway and a
+    # batched run once produced equal-length (capped) takes, so use plain infer() there.
+    use_batch = getattr(tts, "backend", "onnx") != "onnx" and not a.no_batch
     for voice, items in by_voice.items():
         texts = [i[1] for i in items]
-        try:
-            audios = tts.infer_batch(texts, voice=voice)
-        except Exception as e:
-            print(f"infer_batch failed for {voice} ({e}); falling back to infer()")
+        audios = None
+        if use_batch:
+            try:
+                audios = tts.infer_batch(texts, voice=voice)
+            except Exception as e:
+                print(f"infer_batch failed for {voice} ({e}); falling back to infer()")
+        if audios is None:
             audios = [tts.infer(tx, voice=voice) for tx in texts]
-        for (k, text, _v, fx, spk, h), audio in zip(items, audios):
+        for idx, ((k, text, _v, fx, spk, h), audio) in enumerate(zip(items, audios)):
+            for attempt in range(3):  # re-roll truncated / runaway takes
+                problem = take_problem(audio, text)
+                if not problem:
+                    break
+                print(f"  {k}: {problem} — re-rolling ({attempt + 1})")
+                audio = tts.infer(text, voice=voice)
             if a.keep_raw:
                 Path(a.keep_raw).mkdir(parents=True, exist_ok=True)
                 tts.save(audio, str(Path(a.keep_raw) / f"{k}.wav"))
