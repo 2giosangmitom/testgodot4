@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://gameplay/minigames/test/test_harness.gd" id="1"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/test/test_player.tscn" id="2"]
+[ext_resource type="Script" path="res://gameplay/minigames/test/test_door.gd" id="3"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/mop/mop.tscn" id="10"]
+
+[node name="TestMop" type="Node3D"]
+script = ExtResource("1")
+room_size = Vector3(6, 2.8, 6)
+
+[node name="Mop" parent="." instance=ExtResource("10")]
+position = Vector3(0, 0, 0)
+objective_id = "test_mop"
+haunted_stain_index = 1
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector3(0, 0, 1.8)
+
+[node name="Views" type="Node3D" parent="."]
+
+[node name="main" type="Marker3D" parent="Views"]
+position = Vector3(0.2, 0, 1.9)
+
+[node name="Look" type="Marker3D" parent="Views/main"]
+position = Vector3(-0.3, 0, -2.2)
+

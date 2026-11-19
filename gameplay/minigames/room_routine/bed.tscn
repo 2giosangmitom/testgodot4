@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://gameplay/minigames/room_routine/bed_sleep.gd" id="1"]
+
+[node name="Bed" type="Node3D"]
+script = ExtResource("1")
+minigame_id = "go_to_sleep"

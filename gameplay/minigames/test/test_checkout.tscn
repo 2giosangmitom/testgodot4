@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://gameplay/minigames/test/test_harness.gd" id="1"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/test/test_player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/checkout/checkout.tscn" id="3"]
+
+[node name="TestCheckout" type="Node3D"]
+script = ExtResource("1")
+room_size = Vector3(6, 2.8, 6)
+
+[node name="Checkout" parent="." instance=ExtResource("3")]
+objective_id = "test_checkout"
+objective_text = "Tính tiền cho khách"
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector3(0, 0, 0.75)
+
+[node name="Views" type="Node3D" parent="."]
+
+[node name="main" type="Marker3D" parent="Views"]
+position = Vector3(-0.1, 0, 0.7)
+
+[node name="Look" type="Marker3D" parent="Views/main"]
+position = Vector3(0.05, 0.95, -0.8)

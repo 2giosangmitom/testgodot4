@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://gameplay/minigames/test/test_harness.gd" id="1"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/test/test_player.tscn" id="2"]
+[ext_resource type="Script" path="res://gameplay/minigames/test/test_door.gd" id="3"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/room_routine/room_routine.tscn" id="10"]
+
+[node name="TestRoomRoutine" type="Node3D"]
+script = ExtResource("1")
+room_size = Vector3(4, 3.2, 4)
+
+[node name="RoomRoutine" parent="." instance=ExtResource("10")]
+position = Vector3(0, 0, 0)
+objective_id = "test_room"
+door_path = NodePath("../TestDoor")
+
+[node name="TestDoor" type="Node3D" parent="."]
+position = Vector3(0, 0, -1.95)
+rotation = Vector3(0, 0.0, 0)
+script = ExtResource("3")
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector3(0.2, 0, -0.6)
+
+[node name="Views" type="Node3D" parent="."]
+
+[node name="main" type="Marker3D" parent="Views"]
+position = Vector3(0.2, 0, -0.6)
+
+[node name="Look" type="Marker3D" parent="Views/main"]
+position = Vector3(-0.3, 1.1, -1.4)
+
