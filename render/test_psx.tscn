@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://render/test_psx.gd" id="1_tpsx"]
+[ext_resource type="Script" path="res://render/test_screenshot.gd" id="2_tshot"]
+
+[node name="TestPSX" type="Node3D"]
+script = ExtResource("1_tpsx")
+
+[node name="Screenshot" type="Node" parent="."]
+script = ExtResource("2_tshot")
