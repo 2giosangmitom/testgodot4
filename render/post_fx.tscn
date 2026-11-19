@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://render/post_fx.gd" id="1_pfx"]
+[ext_resource type="Shader" path="res://render/shaders/post_fx.gdshader" id="2_pfx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pfx"]
+shader = ExtResource("2_pfx")
+
+[node name="PostFX" type="CanvasLayer"]
+layer = 90
+script = ExtResource("1_pfx")
+
+[node name="Rect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_pfx")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
