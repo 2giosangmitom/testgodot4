@@ -1,0 +1,8 @@
+.godot/
+*.import.tmp
+/build/
+/tools/audio/_downloads/
+/tools/audio/_cache/
+__pycache__/
+*.blend1
+.claude/

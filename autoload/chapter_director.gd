@@ -1,0 +1,58 @@
+extends Node
+## Owns scene flow: level loading with fades, player spawning, and running chapter scripts.
+## Phase 3 fills chapters/chN.gd; each chapter script extends ChapterScript and implements run().
+
+const PLAYER_SCENE := "res://player/player.tscn"
+const LEVELS := {
+	"school": "res://levels/school/school.tscn",
+	"store_alley": "res://levels/store_alley/store_alley.tscn",
+	"dorm_shrine": "res://levels/dorm_shrine/dorm_shrine.tscn",
+}
+
+var current_level: Node = null
+var current_chapter: Node = null
+var transitioning := false
+
+## Loads a level by id (see LEVELS) or path, applies a lighting preset and spawns the player.
+func goto_level(level: String, spawn := "default", preset := "", fade := 0.8) -> Node:
+	transitioning = true
+	GameState.lock_input("transition")
+	if fade > 0.0:
+		EventBus.fade_request.emit(true, fade)
+		await get_tree().create_timer(fade).timeout
+	var path: String = LEVELS.get(level, level)
+	var err := get_tree().change_scene_to_file(path)
+	if err != OK:
+		push_error("ChapterDirector: cannot load " + path)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	current_level = get_tree().current_scene
+	if preset != "" and current_level.has_method("apply_preset"):
+		current_level.apply_preset(preset)
+	if spawn != "" and current_level.has_method("spawn_player"):
+		current_level.spawn_player(spawn)
+	if fade > 0.0:
+		EventBus.fade_request.emit(false, fade)
+	GameState.unlock_input("transition")
+	transitioning = false
+	return current_level
+
+## Runs chapters/ch<n>.gd (or an ending script path) as a child node.
+func start_chapter(n: int, from_checkpoint := "") -> void:
+	await run_script("res://chapters/ch%d.gd" % n, from_checkpoint)
+
+func run_script(path: String, from_checkpoint := "") -> void:
+	if current_chapter:
+		current_chapter.queue_free()
+	var script: Script = load(path)
+	if script == null:
+		push_error("ChapterDirector: missing " + path)
+		return
+	current_chapter = script.new()
+	add_child(current_chapter)
+	await current_chapter.run(from_checkpoint)
+
+func get_marker(name: String) -> Node3D:
+	if current_level and current_level.has_method("get_marker"):
+		return current_level.get_marker(name)
+	return null

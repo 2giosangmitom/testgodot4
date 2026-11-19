@@ -1,0 +1,13 @@
+{
+	"nam": {"name": "Nam", "voice": "Hải Đăng"},
+	"hung": {"name": "Hùng", "voice": "Thiện Minh"},
+	"linh": {"name": "Linh", "voice": "Mai Anh"},
+	"bac_bao_ve": {"name": "Bác Tư bảo vệ", "voice": "Phạm Tuyên"},
+	"chi_quan_ly": {"name": "Chị Hạnh", "voice": "Thùy Dung"},
+	"thay_giao": {"name": "Thầy Khải", "voice": "Minh Đức"},
+	"ba_cu": {"name": "Bà cụ", "voice": "Ngọc Huyền"},
+	"khach": {"name": "Khách", "voice": "Quốc Tuấn"},
+	"me": {"name": "Mẹ", "voice": "Đoan Trang"},
+	"radio": {"name": "Radio", "voice": "Xuân Vĩnh"},
+	"???": {"name": "???", "voice": "Hải Đăng"}
+}
