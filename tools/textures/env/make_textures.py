@@ -647,6 +647,21 @@ def t_signs():
                      (0, 0, 0), rng=rng, grime=0.2)
     finish(arr, "banner_school", colors=16)
 
+    arr = sign_image(256, 32, (170, 24, 20), [("TIÊN HỌC LỄ - HẬU HỌC VĂN", (0.05, 0.12, 0.95, 0.88), FONT_BOLD, (255, 225, 60))],
+                     (0, 0, 0), rng=rng, grime=0.15)
+    finish(arr, "banner_class", colors=12)
+
+    def star(d, W, H):
+        cx, cy, r = W / 2, H / 2, H * 0.32
+        pts = []
+        for k in range(10):
+            rr = r if k % 2 == 0 else r * 0.38
+            a = -math.pi / 2 + k * math.pi / 5
+            pts.append((cx + math.cos(a) * rr, cy + math.sin(a) * rr))
+        d.polygon(pts, fill=(255, 220, 0))
+    arr = sign_image(96, 64, (200, 20, 24), [], (0, 0, 0), deco=star, rng=rng, grime=0.1)
+    finish(arr, "flag", colors=8)
+
     arr = sign_image(256, 32, (20, 50, 130), [("TRƯỜNG ĐẠI HỌC KỸ THUẬT ĐÔ THỊ", (0.03, 0.1, 0.97, 0.9), FONT_BOLD, (255, 255, 255))],
                      (0, 0, 0), rng=rng, grime=0.25)
     finish(arr, "sign_school", colors=16)
