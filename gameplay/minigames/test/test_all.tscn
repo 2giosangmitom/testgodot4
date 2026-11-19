@@ -73,10 +73,10 @@ position = Vector3(4.4, 0, -0.5)
 position = Vector3(-0.4, 0, -1.9)
 
 [node name="noodles" type="Marker3D" parent="Views"]
-position = Vector3(-1.95, 0, 3.7)
+position = Vector3(-1.95, 0, 3.55)
 
 [node name="Look" type="Marker3D" parent="Views/noodles"]
-position = Vector3(0.05, 0.8, 1.0)
+position = Vector3(0.05, 1.0, 1.15)
 
 [node name="room" type="Marker3D" parent="Views"]
 position = Vector3(4.2, 0, 2.4)

@@ -65,7 +65,7 @@ func _build_box() -> void:
 	box = MinigameItem.new()
 	box.name = "Box"
 	box.pickup_prompt = "Bê thùng"
-	box.held_offset = Vector3(-0.08, -0.1, 0.12)
+	box.held_offset = Vector3(-0.12, -0.24, -0.02)
 	box.prompt_override = _box_prompt
 	box.interact_override = _box_interact
 	box.pickable = false

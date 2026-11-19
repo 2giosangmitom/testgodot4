@@ -19,8 +19,8 @@ position = Vector3(0, 0, -1.2)
 [node name="Views" type="Node3D" parent="."]
 
 [node name="main" type="Marker3D" parent="Views"]
-position = Vector3(0.05, 0, -1.25)
+position = Vector3(0.05, 0, -1.1)
 
 [node name="Look" type="Marker3D" parent="Views/main"]
-position = Vector3(-0.05, 0.8, -1.0)
+position = Vector3(-0.05, 1.0, -1.15)
 
