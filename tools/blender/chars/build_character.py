@@ -63,8 +63,8 @@ CHARACTERS = {
     "gazer": C(height=2.02, build=0.8, gaunt=1.0, hair="short", arm_scale=1.12, neck_extra=0.05),
     # Mimics: originals with long arms + tilted neck baked into the rest pose.
     "mimic_hung": C(height=1.66, build=1.12, hair="buzz", belly=0.4, head_scale=1.04, arm_scale=1.6,
-                    head_tilt=24.0, neck_extra=0.03),
-    "mimic_linh": C(height=1.57, sex="f", hair="long", arm_scale=1.6, head_tilt=-24.0, neck_extra=0.04),
+                    head_tilt=22.0, neck_extra=0.03),
+    "mimic_linh": C(height=1.57, sex="f", hair="long", arm_scale=1.6, head_tilt=22.0, neck_extra=0.04),
 }
 
 # --------------------------------------------------------------------------------------------
