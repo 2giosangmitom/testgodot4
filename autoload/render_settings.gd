@@ -23,13 +23,21 @@ func _ready() -> void:
 	low_res = SaveSystem.get_setting("low_res", false)
 	apply_snap()
 	set_fog_preset("night", 0.0)
+	SettingsMenu.apply_saved()
 
 func apply_snap() -> void:
-	# Normal: render 640x480, vertices snap to a 320x240 grid (visible PS1 wobble).
-	# Extreme: render 320x240, snap to 160x120.
-	var render := Vector2i(320, 240) if low_res else Vector2i(640, 480)
-	get_tree().root.content_scale_size = render
-	RenderingServer.global_shader_parameter_set("psx_snap_resolution", Vector2(render) * 0.5)
+	# UI always stays 640x480. Extreme mode renders the 3D scene at 320x240 (nearest upscale),
+	# which keeps the UI crisp while making the world blocky. Vertices snap to a 320x240 grid
+	# (160x120 in extreme mode) for the PS1 wobble.
+	var vp := get_tree().root
+	vp.content_scale_size = Vector2i(640, 480)
+	vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
+	vp.scaling_3d_scale = 1.0
+	if low_res:
+		vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_NEAREST
+		vp.scaling_3d_scale = 0.5
+	var snap := Vector2(160, 120) if low_res else Vector2(320, 240)
+	RenderingServer.global_shader_parameter_set("psx_snap_resolution", snap)
 
 func set_low_res(on: bool) -> void:
 	low_res = on

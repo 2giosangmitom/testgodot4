@@ -132,3 +132,14 @@ Work on your worktree branch, commit often with clear messages, end commit messa
 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. Don't commit `.godot/`.
 Verify with `godot --headless --path . --import` (must not print script/shader errors for your files)
 and, for runtime checks, `godot --headless --path . res://<your_test>.tscn --quit-after 120`.
+
+## UI / player notes (from Track B)
+- `Player.held_item_rotated(relative: Vector2)` — emitted with mouse pixels while RMB is held with an item.
+  If something is connected, the player does NOT rotate the item itself (the minigame item does) and stops camera look meanwhile.
+- Groups: `ui_cursor` — any visible Control in this group frees the mouse cursor; `phone` — the phone UI; `hud` — the HUD.
+- CanvasLayers: post-fx 90, phone 95, HUD 100, paper overlay 105, fade 120, pause menu 130.
+- Door API (`gameplay/props/door.gd`): `door_id`, `locked`, `is_locked()`, `is_open`, `lock()`, `unlock()`, `close()`,
+  `open_door()`, `force_open(duration)` (ignores lock), `peek_open(angle)`; emits `EventBus.door_state_changed`.
+- Reading a phone thread sets GameState flag `read_<msg_id>`.
+- Extreme mode (320x240): the 3D scene is rendered at 0.5 scale with nearest filtering; UI stays 640x480.
+- Crouched eye height 0.9 m: hide volumes must cover desk/counter plus the space in front of them (you cannot crawl under a 0.75 m desk).
