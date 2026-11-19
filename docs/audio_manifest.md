@@ -46,6 +46,8 @@ Other tracks may ONLY use names from this list. Need a new one → put it in you
 | shrine_bell | small temple bell |
 | wind_chime | eerie wind chime |
 | water_drip | single drip |
+| water_pour | pouring water into a pot (1.5 s) |
+| buzz_wrong | short low 'wrong' buzzer (0.4 s) |
 | fan_click | electric fan button click |
 | page_turn | paper |
 | ui_move / ui_select / ui_back | menu sounds (soft, retro) |

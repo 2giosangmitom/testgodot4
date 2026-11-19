@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://render/shaders/psx_transparent.gdshader" id="1_sh"]
+
+[resource]
+resource_name = "psx_fridge_glass"
+shader = ExtResource("1_sh")
+shader_parameter/tint = Color(0.82, 0.9, 0.95, 0.32)
+shader_parameter/tint_energy = 0.5
+shader_parameter/fresnel_strength = 0.45
