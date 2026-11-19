@@ -422,7 +422,7 @@ def crickets(n, rng, count=4, level=1.0, density=0.85):
             st = int(i * period + rng.uniform(-0.01, 0.01) * SR)
             for p in range(npulse):
                 place(env, pshape * rng.uniform(0.7, 1.0), st + int(p * SR / prate))
-        car = osc(f0 * (1 + 0.003 * lfo(n, 7)), n) + 0.15 * osc(f0 * 2, n)
+        car = osc(f0 * (1 + 0.003 * lfo(n, 7)), n) + 0.05 * osc(f0 * 2, n)
         out += car * env * (0.35 + 0.65 * gain) * rng.uniform(0.4, 1.0)
     return out * level
 
@@ -459,11 +459,12 @@ def mains_hum(n, f=100.0, harmonics=18, tilt=0.75, rng=None, buzz=0.3):
 
 def fridge(n, rng):
     t = T(n)
-    hum = 0.6 * np.sin(2 * np.pi * 50 * t) + 0.35 * np.sin(2 * np.pi * 100 * t) + 0.15 * np.sin(2 * np.pi * 150 * t)
+    hum = (0.3 * np.sin(2 * np.pi * 50 * t) + 0.4 * np.sin(2 * np.pi * 100 * t) + 0.25 * np.sin(2 * np.pi * 150 * t)
+           + 0.18 * np.sin(2 * np.pi * 200 * t) + 0.1 * np.sin(2 * np.pi * 300 * t))
     whine = 0.03 * np.sin(2 * np.pi * 412 * t + 0.3 * lfo(n, 23))
     rattle = bandpass(cnoise(n, rng), SR, 600, 2500, circular=True) * (0.5 + 0.5 * np.sin(2 * np.pi * 100 * t)) ** 4
     rattle *= smooth_rand(n, rng, kmax=12) ** 3 * 0.25
-    fan = filt(cnoise(n, rng, "pink"), SR, hp=80, lp=900, circular=True) * 0.18
+    fan = filt(cnoise(n, rng, "pink"), SR, hp=150, lp=1200, circular=True) * 0.3
     wob = 1 + 0.06 * smooth_rand(n, rng, kmax=8)
     return ((hum + whine) * wob + rattle + fan).astype(np.float32)
 
@@ -1154,7 +1155,7 @@ def hum_fluorescent(name):
     rng = rng_for(name)
     n = N(20)
     # Vietnamese mains are 50 Hz → tubes buzz at 100 Hz (+ a little 50 Hz)
-    x = mains_hum(n, 100, 20, 0.78, rng, buzz=0.5) + 0.25 * np.sin(2 * np.pi * 50 * T(n))
+    x = mains_hum(n, 100, 20, 0.85, rng, buzz=1.2) + 0.1 * np.sin(2 * np.pi * 50 * T(n))
     x *= 1 + 0.08 * smooth_rand(n, rng, 30) * lfo(n, 37)
     ticks = np.zeros(n, np.float32)
     for k in rng.integers(0, n, size=9):
@@ -1178,7 +1179,7 @@ def amb_alley_night(name):
         place(dogs, resample_pitch(d, -1)[:N(2.5)], N(46), 0.6)
     wires = mains_hum(n, 100, 10, 0.8, rng, 0.8) * (0.6 + 0.4 * smooth_rand(n, rng, 6))
     wires = bandpass(wires, SR, 150, 3000, circular=True)
-    x = 0.32 * _norm(cr) + 0.5 * far + 0.25 * _norm(dogs) + 0.05 * _norm(wires) + 0.2 * wind(n, rng, lowness=0.8)
+    x = 0.24 * _norm(cr) + 0.5 * far + 0.25 * _norm(dogs) + 0.05 * _norm(wires) + 0.2 * wind(n, rng, lowness=0.8)
     return finish_loop(x, -27, lp=6500, hp=35)
 
 
@@ -1287,7 +1288,7 @@ def drone_dread(name):
     metal = bandpass(cnoise(n, rng, "pink"), SR, 600, 1400, circular=True)
     metal = fxc.flanger(metal, SR, 6, 60 / n * SR * 0 + 3 / (n / SR), 0.6, 0.7) * smooth_rand(n, rng, 4) ** 3
     hi = sum(osc(mtof(m, c), n) for m, c in ((76, 0), (77, -30))) * 0.04 * smooth_rand(n, rng, 3) ** 2
-    x = _norm(d) + 0.6 * sub + 0.25 * _norm(metal) + hi
+    x = _norm(d) + 0.5 * sub + 0.4 * _norm(metal) + hi
     x = reverb(x, SR, 3.0, 0.3, lp=1500, circular=True)
     return finish_loop(x, -24, lp=3000, hp=22)
 

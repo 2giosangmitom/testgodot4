@@ -60,10 +60,13 @@ def main():
         bands = "/".join(f"{100 * np.sum(X[(f >= lo) & (f < hi)]) / tot:3.0f}" for lo, hi in BANDS)
         line = f"{Path(p).name[:34]:34s} {sr:5d} {ch:2d} {dur:6.2f} {pk:6.1f} {lu:6.1f} {cent:5.0f}  {bands}"
         if a.loop:
-            w = int(0.01 * sr)
-            seam = np.sqrt(np.mean((x[-w:] - x[:w]) ** 2)) / (np.sqrt(np.mean(x ** 2)) + 1e-9)
-            jump = abs(x[-1] - x[0]) / (np.max(np.abs(x)) + 1e-9)
-            line += f"  {seam:4.2f}/{jump:4.2f}"
+            # seam: wrap-around sample jump vs the 99th percentile of in-file jumps (<1 = invisible);
+            # edge: RMS of last 50 ms vs first 50 ms in dB (≈0 = no level step at the loop point)
+            d = np.abs(np.diff(x))
+            seam = abs(x[0] - x[-1]) / (np.percentile(d, 99) + 1e-9)
+            w = int(0.05 * sr)
+            edge = 20 * np.log10((np.sqrt(np.mean(x[-w:] ** 2)) + 1e-9) / (np.sqrt(np.mean(x[:w] ** 2)) + 1e-9))
+            line += f"  {seam:4.2f} {edge:+5.1f}dB"
         if a.f0:
             line += f"  {f0(x, sr):5.0f}"
         print(line)
