@@ -264,11 +264,15 @@ def tube_house(env, pos, width, yaw=0.0, storeys=3, wall=None, ground="shutter",
     tint_v = rng.uniform(0.82, 1.0)
     tint = (tint_v, tint_v * rng.uniform(0.96, 1.02), tint_v * rng.uniform(0.92, 1.0))
     with env.at(pos, yaw=yaw):
-        skip = ["-y", "-z"] + ([] if side_walls else ["+x", "-x"])
-        env.box((0, 0, -depth), (width, H, 0), wall, skip=skip, uvoff=uvo, tint=tint, seg=3.3)
+        Ht = H + (0.6 if roof else 0.0)
+        env.quad((0, 0, 0), (width, 0, 0), (0, Ht, 0), wall, uvoff=uvo, tint=tint, seg=3.3)          # facade
+        if side_walls:
+            nv = max(1, round(Ht / 6.0))
+            env.quad((width, 0, 0), (0, 0, -depth), (0, Ht, 0), wall, uvoff=uvo, tint=tint, nu=1, nv=nv)
+            env.quad((0, 0, -depth), (0, 0, depth), (0, Ht, 0), wall, uvoff=uvo, tint=tint, nu=1, nv=nv)
         if roof:
-            env.box((0, H, -depth), (width, H + 0.6, 0.0), wall, skip=["-y", "-z"], uvoff=uvo, tint=tint)
-            env.box((0.12, H + 0.6, -depth), (width - 0.12, H + 0.62, -0.12), "concrete_dark", skip=["-y"])
+            env.quad((0, Ht, 0), (width, 0, 0), (0, 0, -depth), "concrete_dark", nu=1, nv=1)
+            env.quad((0.15, H, -0.15), (width - 0.3, 0, 0), (0, 0.6, 0), wall, uvoff=uvo, tint=tint, nu=1, nv=1)
         f = 0.02  # overlay offset in front of facade
         m = 0.3   # side margin
         if ground == "shutter":
