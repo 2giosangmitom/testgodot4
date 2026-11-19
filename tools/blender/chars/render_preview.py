@@ -13,7 +13,7 @@ from mathutils import Vector
 argv = sys.argv[sys.argv.index("--") + 1:]
 out = argv.pop(0)
 opts = {"anim": None, "frame": 0, "cols": 99, "spacing": 0.8, "res": "640x480", "angle": 20.0, "key": None,
-        "height": None}
+        "height": None, "ortho": None}
 files = []
 i = 0
 while i < len(argv):
@@ -31,6 +31,9 @@ scn.render.engine = "BLENDER_WORKBENCH"
 scn.display.shading.light = "STUDIO"
 scn.display.shading.color_type = "TEXTURE"
 scn.display.shading.show_backface_culling = True
+scn.display.shading.show_specular_highlight = False
+if os.environ.get("PREVIEW_FLAT"):
+    scn.display.shading.light = "FLAT"
 scn.render.film_transparent = False
 w, h = map(int, opts["res"].split("x"))
 scn.render.resolution_x, scn.render.resolution_y = w, h
@@ -87,6 +90,7 @@ for idx, f in enumerate(files):
                     for n in m.node_tree.nodes:
                         if n.type == "TEX_IMAGE":
                             n.interpolation = "Closest"
+    bpy.context.view_layer.update()
     bb = [o.matrix_world @ Vector(c) for o in new if o.type == "MESH" for c in o.bound_box]
     if bb:
         maxh = max(maxh, max(v.z for v in bb))
@@ -105,7 +109,9 @@ rows = maxy_row + 1
 cam_data.type = "ORTHO"
 ang = math.radians(float(opts["angle"]))
 H = float(opts["height"]) if opts["height"] else maxh * 0.55
-cam_data.ortho_scale = max(width * 1.08, maxh * 1.15 * w / h * (1 + 0.35 * (rows - 1)))
+cam_data.ortho_scale = max(width * 1.1, maxh * 1.2 * w / h * (1 + 0.6 * (rows - 1)))
+if opts.get("ortho"):
+    cam_data.ortho_scale = float(opts["ortho"])
 cam.location = Vector((cx + math.sin(ang) * 20, -math.cos(ang) * 20 + (rows - 1) * sp * 0.8, H + 4.0))
 direction = Vector((cx, (rows - 1) * sp * 0.8, H)) - cam.location
 cam.rotation_euler = direction.to_track_quat("-Z", "Y").to_euler()

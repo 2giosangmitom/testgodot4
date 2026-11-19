@@ -19,6 +19,9 @@ import os
 import sys
 from mathutils import Vector, Matrix, Quaternion, Euler
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import glbpost  # noqa: E402
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 TEX = os.path.join(ROOT, "assets", "textures", "chars")
@@ -59,9 +62,9 @@ CHARACTERS = {
     # Gazer: 20% taller than average, gaunt, elongated limbs/neck.
     "gazer": C(height=2.02, build=0.8, gaunt=1.0, hair="short", arm_scale=1.12, neck_extra=0.05),
     # Mimics: originals with long arms + tilted neck baked into the rest pose.
-    "mimic_hung": C(height=1.66, build=1.12, hair="buzz", belly=0.4, head_scale=1.04, arm_scale=1.38,
+    "mimic_hung": C(height=1.66, build=1.12, hair="buzz", belly=0.4, head_scale=1.04, arm_scale=1.6,
                     head_tilt=24.0, neck_extra=0.03),
-    "mimic_linh": C(height=1.57, sex="f", hair="long", arm_scale=1.42, head_tilt=-24.0, neck_extra=0.04),
+    "mimic_linh": C(height=1.57, sex="f", hair="long", arm_scale=1.6, head_tilt=-24.0, neck_extra=0.04),
 }
 
 # --------------------------------------------------------------------------------------------
@@ -469,7 +472,7 @@ def build_body(mb, p, J):
     chest_ry = (0.11 if not fem else 0.118) * w * g
     tube(mb, "chest", "chest", (0, 0.0, cb), (0, 0.01, sz + 0.03),
          [(0.0, 0.15 * w * g, 0.1 * w * g, 0.0), (0.45, 0.16 * w * (g ** 0.5), chest_ry, -0.006 if fem else 0.0),
-          (0.82, J["shoulder_x"] + 0.02, 0.095 * w * g, 0.008), (1.0, 0.07 * w, 0.055 * w, 0.01)],
+          (0.8, J["shoulder_x"] + 0.005, 0.092 * w * g, 0.008), (1.0, 0.075 * w, 0.055 * w, 0.01)],
          8, "chest", cap0=False, cap1=True, cap_uv=(0.25, 0.4))
     # neck
     nt, nb = J["neck_top"], J["neck_base"]
@@ -484,7 +487,7 @@ def build_body(mb, p, J):
         tip = wrist + Vector((sx * 0.005, -0.008, -J["hand_len"]))
         J["arm_" + side] = (sh, elbow, wrist, tip)
         ar = g * w ** 0.6
-        tube(mb, "upper_arm_" + side, "arm", sh + Vector((0, 0, 0.035)), elbow - Vector((0, 0, 0.015)),
+        tube(mb, "upper_arm_" + side, "arm", sh + Vector((-sx * 0.01, 0, 0.012)), elbow - Vector((0, 0, 0.015)),
              [(0.0, 0.043 * ar, 0.048 * ar, 0.0), (0.3, 0.047 * ar, 0.048 * ar, 0.0), (1.0, 0.037 * ar, 0.04 * ar, 0.0)],
              6, "upper_arm", cap0=True, cap1=True, cap_uv=(0.25, 0.2))
         tube(mb, "lower_arm_" + side, "forearm", elbow + Vector((0, 0, 0.012)), wrist,
@@ -594,6 +597,7 @@ def make_mat(mname, img_path):
     tex.interpolation = "Closest"
     nt.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
     bsdf.inputs["Roughness"].default_value = 1.0
+    m.use_backface_culling = True
     if "Specular IOR Level" in bsdf.inputs:
         bsdf.inputs["Specular IOR Level"].default_value = 0.0
     return m
@@ -854,8 +858,8 @@ def build_anims(arm, J, p):
                     (90, wt(1), {"hips": (0.01, 0, 0)})])
 
     # knock: right fist knocks 3 times on a door in front at head height
-    up = {"upper_arm_R": (-62, 10, 0), "lower_arm_R": (-70, 0, 0), "hand_R": (-10, 0, 0), "head": (4, 0, 0)}
-    hit = {"upper_arm_R": (-58, 10, 0), "lower_arm_R": (-48, 0, 0), "hand_R": (-10, 0, 0), "head": (4, 0, 0)}
+    up = {"upper_arm_R": (-55, 10, 0), "lower_arm_R": (-68, 0, 0), "hand_R": (-10, 0, 0), "head": (4, 0, 0)}
+    hit = {"upper_arm_R": (-52, 10, 0), "lower_arm_R": (-44, 0, 0), "hand_R": (-10, 0, 0), "head": (4, 0, 0)}
     A.make("knock", [(0, P({}), {}), (8, P(up), {}), (12, P(hit), {}), (16, P(up), {}), (20, P(hit), {}),
                      (24, P(up), {}), (28, P(hit), {}), (34, P(up), {}), (48, P({}), {})])
 
@@ -962,10 +966,14 @@ def build(name, p, out_dir):
         export_animations=True, export_animation_mode="NLA_TRACKS", export_force_sampling=False,
         export_optimize_animation_size=False, export_reset_pose_bones=True, export_def_bones=False,
         export_skins=True, export_morph=True, export_morph_normal=False, export_extras=True,
-        export_image_format="AUTO", export_materials="EXPORT", export_cameras=False, export_lights=False,
+        export_image_format="NONE", export_materials="EXPORT", export_cameras=False, export_lights=False,
         export_leaf_bone=False, export_anim_slide_to_zero=True)
+    glbpost.postprocess(path, textures={f"{name}_head": head_tex, f"{name}_body": body_tex}, step_anims=STEP_ANIMS)
     print(f"[char] {name}: {tris} tris, {len(mb.verts)} verts -> {path}")
     return tris
+
+
+STEP_ANIMS = ("stiff_run", "stand_stare")
 
 
 def main():

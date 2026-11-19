@@ -300,7 +300,7 @@ def hair_shade(c, mask, s, strands=260):
     c.blend(mask, hc, 1.0)
     c.streaks(mask, mix(hc, (140, 120, 110), 0.35), strands, 0.12, 0.005, 0.12, 0.6)
     c.streaks(mask, mix(hc, (0, 0, 0), 0.6), strands // 2, 0.1, 0.006, 0.12, 0.6)
-    c.shade(mask * c.ellipse(0.4, 0.05, 0.3, 0.12, blur=0.05), 1.25)  # sheen
+    c.shade(mask * c.ellipse(0.4, 0.05, 0.3, 0.12, blur=0.05), 1.12)  # sheen
 
 
 def paint_front_hair(c, s):
