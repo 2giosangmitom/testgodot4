@@ -3,7 +3,7 @@ extends Node3D
 ## procedural textures. Exercises PSXApply (StandardMaterial3D -> PSX), PSXMaterialFactory,
 ## FlickerLight, FixedCamera and PostFX.
 ## User args (after `--`): --preset=<fog preset>  --static=<0..1>  --distort=<0..1>
-##   --orbit=<deg/s>  --angle=<deg>  --view=street|face  --no-post  --no-affine
+##   --orbit=<deg/s>  --angle=<deg>  --view=street|face  --no-post  --no-affine  --steady
 ## Keys: F flicker burst, O/P lights off/on, S toggle static.
 
 var cam: FixedCamera
@@ -61,6 +61,9 @@ func _ready() -> void:
 		RenderingServer.global_shader_parameter_set("psx_snap_resolution", Vector2(r, r * 0.75))
 	if args.has("no-affine"):
 		RenderingServer.global_shader_parameter_set("psx_affine_strength", 0.0)
+	if args.has("steady"):
+		get_tree().call_group("test_lights", "set_process", false)
+		cam.fov_jitter = 0.0
 
 func _process(delta: float) -> void:
 	_t += delta

@@ -2,7 +2,7 @@ class_name TriggerZone
 extends Area3D
 ## Player-only trigger volume. Layer 5 (16), mask player (2).
 ## On enter: emits `triggered`, sets GameState flag `trig_<trigger_id>`.
-## Chapter scripts can `await GameState flag` via ChapterScript.wait_flag("trig_<id>").
+## Chapter scripts should use wait_trigger(node_name) for scene-local state.
 
 signal triggered(body: Node3D)
 signal exited(body: Node3D)

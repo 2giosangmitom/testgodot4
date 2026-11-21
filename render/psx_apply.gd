@@ -122,6 +122,7 @@ static func convert_material(src: Material, hint_name := "", opts := {}) -> Mate
 
 static func clear_cache() -> void:
 	_cache.clear()
+	_word_re.clear()
 
 static func _apply_mesh_instance(mi: MeshInstance3D, opts: Dictionary) -> int:
 	var count := 0

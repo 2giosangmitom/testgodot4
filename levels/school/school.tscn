@@ -1,0 +1,209 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://levels/school/school.gd" id="1_school"]
+[ext_resource type="PackedScene" path="res://assets/models/env/school.glb" id="2_env"]
+[ext_resource type="Script" path="res://core/lighting_preset.gd" id="3_preset"]
+[ext_resource type="Script" path="res://gameplay/props/door.gd" id="4_door"]
+[ext_resource type="Script" path="res://gameplay/props/readable.gd" id="5_readable"]
+[ext_resource type="Script" path="res://gameplay/props/pickup_item.gd" id="6_pickup"]
+[ext_resource type="Script" path="res://gameplay/props/trigger_zone.gd" id="7_trigger"]
+[ext_resource type="PackedScene" path="res://gameplay/entities/crowd/crowd_group.tscn" id="8_group"]
+[ext_resource type="PackedScene" path="res://assets/models/props/incense_bundle.glb" id="9_incense"]
+[ext_resource type="PackedScene" path="res://assets/models/props/water_bottle.glb" id="10_oil"]
+[ext_resource type="PackedScene" path="res://assets/models/env/door_wood.glb" id="11_wood"]
+[ext_resource type="PackedScene" path="res://assets/models/env/door_glass_shop.glb" id="12_glass"]
+
+[sub_resource type="Environment" id="Env_day"]
+background_mode = 0
+ambient_light_source = 2
+ambient_light_color = Color(0.78, 0.75, 0.69, 1)
+ambient_light_energy = 0.72
+
+[sub_resource type="Environment" id="Env_night"]
+background_mode = 0
+ambient_light_source = 2
+ambient_light_color = Color(0.49, 0.52, 0.68, 1)
+ambient_light_energy = 0.36
+
+[sub_resource type="BoxShape3D" id="Shape_poster"]
+size = Vector3(0.35, 0.42, 0.032)
+
+[sub_resource type="BoxShape3D" id="Shape_incense"]
+size = Vector3(0.12, 0.34, 0.12)
+
+[sub_resource type="BoxShape3D" id="Shape_oil"]
+size = Vector3(0.13, 0.24, 0.13)
+
+[sub_resource type="NavigationMesh" id="Nav_school"]
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = &"school_nav_source"
+agent_height = 1.75
+agent_radius = 0.25
+agent_max_climb = 0.25
+filter_baking_aabb = AABB(-40, -0.65, -28.2, 80, 2.95, 41.2)
+
+[node name="School" type="Node3D"]
+script = ExtResource("1_school")
+level_id = "school"
+default_preset = "day"
+
+[node name="Env" type="Node3D" parent="." groups=["school_nav_source"]]
+
+[node name="SchoolGeometry" parent="Env" instance=ExtResource("2_env")]
+
+[node name="Spawns" type="Node3D" parent="."]
+
+[node name="default" type="Marker3D" parent="Spawns"]
+
+[node name="classroom" type="Marker3D" parent="Spawns"]
+
+[node name="street" type="Marker3D" parent="Spawns"]
+
+[node name="gate_outside" type="Marker3D" parent="Spawns"]
+position = Vector3(0, 0, 2.65)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Presets" type="Node3D" parent="."]
+
+[node name="day" type="Node3D" parent="Presets"]
+script = ExtResource("3_preset")
+fog_preset = "day"
+ambience = "amb_school_day"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Presets/day"]
+environment = SubResource("Env_day")
+
+[node name="LateSun" type="DirectionalLight3D" parent="Presets/day"]
+rotation_degrees = Vector3(-37, -55, 0)
+light_color = Color(1, 0.91, 0.76, 1)
+light_energy = 0.82
+shadow_enabled = true
+directional_shadow_max_distance = 40.0
+
+[node name="night_ch3" type="Node3D" parent="Presets"]
+visible = false
+script = ExtResource("3_preset")
+fog_preset = "night"
+ambience = "amb_street_dead"
+clock_hours = 22
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Presets/night_ch3"]
+environment = SubResource("Env_night")
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="ClassroomA" type="StaticBody3D" parent="Doors"]
+position = Vector3(-3, 0.45, -21)
+script = ExtResource("4_door")
+door_id = "classrooma"
+
+[node name="Leaf" parent="Doors/ClassroomA" instance=ExtResource("11_wood")]
+
+[node name="Grocery" type="StaticBody3D" parent="Doors"]
+position = Vector3(15.9, 0, 10.95)
+rotation_degrees = Vector3(0, 180, 0)
+script = ExtResource("4_door")
+door_id = "grocery"
+width = 1.15
+
+[node name="Leaf" parent="Doors/Grocery" instance=ExtResource("12_glass")]
+scale = Vector3(1.2777778, 1, 1)
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="MissingPoster" type="StaticBody3D" parent="Interactables"]
+position = Vector3(-7.6, 1.55, -16.534)
+script = ExtResource("5_readable")
+readable_id = "missing_poster"
+
+[node name="Collision" type="CollisionShape3D" parent="Interactables/MissingPoster"]
+shape = SubResource("Shape_poster")
+
+[node name="IncensePickup" type="StaticBody3D" parent="Interactables"]
+position = Vector3(16.78, 0.72, 12.36)
+script = ExtResource("6_pickup")
+item_id = "incense"
+display_name = "Bó nhang"
+inventory_item = true
+
+[node name="IncenseBundle" parent="Interactables/IncensePickup" instance=ExtResource("9_incense")]
+
+[node name="Collision" type="CollisionShape3D" parent="Interactables/IncensePickup"]
+position = Vector3(0, 0.16, 0)
+shape = SubResource("Shape_incense")
+
+[node name="GuardOilPickup" type="StaticBody3D" parent="Interactables"]
+position = Vector3(-6.45, 0.75, -0.89)
+script = ExtResource("6_pickup")
+item_id = "oil"
+display_name = "Chai dầu lạc"
+inventory_item = true
+
+[node name="OilBottle" parent="Interactables/GuardOilPickup" instance=ExtResource("10_oil")]
+
+[node name="Collision" type="CollisionShape3D" parent="Interactables/GuardOilPickup"]
+position = Vector3(0, 0.11, 0)
+shape = SubResource("Shape_oil")
+
+[node name="Triggers" type="Node3D" parent="."]
+
+[node name="trig_gate" type="Area3D" parent="Triggers"]
+position = Vector3(0, 0, -1.2)
+script = ExtResource("7_trigger")
+trigger_id = "trig_gate"
+size = Vector3(5.9, 2.5, 0.9)
+
+[node name="trig_ch3_gate" type="Area3D" parent="Triggers"]
+position = Vector3(0, 0, 0.95)
+script = ExtResource("7_trigger")
+trigger_id = "trig_ch3_gate"
+size = Vector3(6.2, 2.5, 1.5)
+
+[node name="trig_ch3_leave" type="Area3D" parent="Triggers"]
+position = Vector3(37.8, -0.15, 6.5)
+script = ExtResource("7_trigger")
+trigger_id = "trig_ch3_leave"
+size = Vector3(1.5, 2.5, 13)
+
+[node name="Entities" type="Node3D" parent="."]
+
+[node name="CrowdBusStop" parent="Entities" instance=ExtResource("8_group")]
+entity_id = "crowd_bus_stop"
+
+[node name="CrowdSweepers" parent="Entities" instance=ExtResource("8_group")]
+entity_id = "crowd_sweepers"
+
+[node name="CrowdTeaShop" parent="Entities" instance=ExtResource("8_group")]
+entity_id = "crowd_tea_shop"
+
+[node name="CrowdSchoolyard" parent="Entities" instance=ExtResource("8_group")]
+entity_id = "crowd_schoolyard"
+
+[node name="NPCs" type="Node3D" parent="."]
+
+[node name="Thay_Khai" type="Node3D" parent="NPCs"]
+position = Vector3(-3.45, 0.52, -25.17)
+rotation_degrees = Vector3(0, -90, 0)
+visible = false
+
+[node name="Linh" type="Node3D" parent="NPCs"]
+position = Vector3(0.93, 0.45, -23.5)
+rotation_degrees = Vector3(0, 90, 0)
+visible = false
+
+[node name="Hung" type="Node3D" parent="NPCs"]
+position = Vector3(1.15, 0, -3.65)
+rotation_degrees = Vector3(0, 161, 0)
+visible = false
+
+[node name="BacTu" type="Node3D" parent="NPCs"]
+visible = false
+
+[node name="Students" type="Node3D" parent="NPCs"]
+visible = false
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("Nav_school")

@@ -30,6 +30,8 @@ enum Mode { OUTSIDE_GLASS, HUNT }
 @export var flicker_group := ""
 ## HUNT: the last step appears right behind the player instead of at the last marker.
 @export var final_behind_player := false
+## Story encounters can end the marker path without automatically catching Nam.
+@export var catch_at_path_end := true
 ## HUNT: player closer than this = caught.
 @export var catch_distance := 1.0
 @export_group("Observation")
@@ -46,6 +48,7 @@ enum Mode { OUTSIDE_GLASS, HUNT }
 @export var stare_kills := true
 ## Time between losing control and the catch.
 @export var lose_control_time := 1.2
+@export var nonlethal_stare := false
 
 ## Injectable observation (tests): Callable() -> bool. Invalid = real camera test.
 var observation_override := Callable()
@@ -259,7 +262,10 @@ func _tick_stare_out(delta: float) -> void:
 		p.look_at_point(body.get_head_global_position(), 0.1)
 	if _out_t >= lose_control_time:
 		GameState.unlock_input("gazer_stare")
-		_catch("gazer_stare")
+		if nonlethal_stare:
+			vanish()
+		else:
+			_catch("gazer_stare")
 
 # ------------------------------------------------------------------ endings
 
@@ -275,7 +281,8 @@ func _catch(cause: String) -> void:
 func _on_reached_end() -> void:
 	reached_end.emit()
 	if mode == Mode.HUNT:
-		_catch("gazer_reach")
+		if catch_at_path_end:
+			_catch("gazer_reach")
 		return
 	set_state("at_glass")
 	_glass_scare()

@@ -42,6 +42,9 @@ func _ready() -> void:
 	_build_ui()
 	fade = FadeLayer.new()
 	add_child(fade)
+	if GameState.debug_autoplay and DebugShot.get_arg("shot") == "":
+		ChapterDirector.start_autoplay.call_deferred()
+		return
 	if ResourceLoader.exists("res://render/post_fx.tscn"):
 		add_child(load("res://render/post_fx.tscn").instantiate())
 	var demo := DebugShot.get_arg("demo")
@@ -243,6 +246,13 @@ func _build_ui() -> void:
 	ver.offset_bottom = -4
 	ver.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	ui.add_child(ver)
+	if ChapterDirector.menu_error != "":
+		var error := Label.new()
+		error.text = ChapterDirector.menu_error
+		error.position = Vector2(40, 420)
+		error.add_theme_color_override("font_color", Color.SALMON)
+		ui.add_child(error)
+		ChapterDirector.menu_error = ""
 	settings = SettingsMenu.new()
 	settings.visible = false
 	settings.closed.connect(_back_to_main)

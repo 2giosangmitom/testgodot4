@@ -16,12 +16,11 @@ const POST_FX_SCENE := "res://render/post_fx.tscn"
 @export var walk_speed := 1.6
 @export var sprint_speed := 3.6
 @export var crouch_speed := 0.9
-@export var phone_speed := 0.9
 @export var accel := 9.0
 @export var stand_eye := 1.62
-@export var crouch_eye := 0.9
+@export var crouch_eye := 0.60
 @export var stand_height := 1.75
-@export var crouch_height := 1.0
+@export var crouch_height := 0.68
 @export var radius := 0.3
 @export var gravity := 9.8
 @export var stamina_drain := 20.0
@@ -301,7 +300,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_yaw -= deg_to_rad(event.relative.x * sens)
 			_pitch = clampf(_pitch - deg_to_rad(event.relative.y * sens), deg_to_rad(-85), deg_to_rad(85))
 		return
-	if not can_control():
+	if not can_control() or GameState.phone_open:
 		return
 	if event.is_action_pressed("flashlight"):
 		toggle_flashlight()
@@ -352,7 +351,10 @@ func _physics_process(dt: float) -> void:
 	rotation.y = _yaw
 	var ctrl := can_control()
 	var input := Vector2.ZERO
-	if ctrl:
+	if GameState.phone_open:
+		velocity.x = 0.0
+		velocity.z = 0.0
+	elif ctrl:
 		input = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	# crouch: hold OR toggle (tap). Holding while toggled keeps crouched.
 	var want_crouch := ctrl and _crouch_toggled
@@ -385,8 +387,6 @@ func _physics_process(dt: float) -> void:
 		speed = crouch_speed
 	elif _sprinting:
 		speed = sprint_speed
-	if GameState.phone_open:
-		speed = minf(speed, phone_speed)
 	if _held and _held.has_meta("heavy"):
 		speed *= 0.7
 	var dir := (transform.basis * Vector3(input.x, 0, input.y))

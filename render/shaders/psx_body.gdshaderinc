@@ -73,20 +73,28 @@ void fragment() {
 		discard;
 	}
 	vec3 c = col.rgb;
+	if (OUTPUT_IS_SRGB) {
+		c = psx_to_linear(c);
+	}
 	if (color_reduce) {
 		c = psx_reduce_linear(c, FRAGCOORD.xy, dither_strength);
 	}
-	vec3 emis = texture(emission_texture, uv).rgb * emission_color.rgb * emission_strength * emit_level;
+	vec3 emis = texture(emission_texture, uv).rgb * emission_color.rgb;
+	if (OUTPUT_IS_SRGB) {
+		emis = psx_to_linear(emis);
+	}
+	emis *= emission_strength * emit_level;
 	float f = psx_fog_factor(length(VERTEX)) * fog_mult;
 	vec3 fog = psx_fog_linear();
 #ifdef PSX_UNLIT
 	vec3 lit = c * brightness * mix(off_level, 1.0, clamp(emit_level, 0.0, 1.0)) + emis;
-	ALBEDO = mix(lit, fog, f);
+	vec3 fogged = mix(lit, fog, f);
+	ALBEDO = OUTPUT_IS_SRGB ? psx_to_srgb(fogged) : fogged;
 #else
 	// Lit: final = ALBEDO * light + EMISSION. Scaling albedo by (1-f) and blending emission
 	// toward the fog colour gives final = mix(lit_colour, fog, f) regardless of lighting.
-	ALBEDO = c * (1.0 - f);
-	EMISSION = mix(emis, fog, f);
+	ALBEDO = (OUTPUT_IS_SRGB ? psx_to_srgb(c) : c) * (1.0 - f);
+	EMISSION = OUTPUT_IS_SRGB ? mix(psx_to_srgb(emis), psx_fog_color.rgb, f) : mix(emis, fog, f);
 	ROUGHNESS = 1.0;
 	METALLIC = 0.0;
 	SPECULAR = 0.0;

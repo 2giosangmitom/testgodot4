@@ -13,7 +13,8 @@ func _ready() -> void:
 func save_checkpoint(id: String) -> void:
 	last_checkpoint_id = id
 	var data := {"id": id, "state": GameState.to_dict()}
-	_write(SAVE_PATH, data)
+	if not GameState.debug_autoplay:
+		_write(SAVE_PATH, data)
 	EventBus.checkpoint_reached.emit(id)
 
 func has_checkpoint() -> bool:

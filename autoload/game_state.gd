@@ -14,11 +14,16 @@ var input_locks: Dictionary = {}       # reason -> true
 var flashlight_on := false
 var phone_open := false
 var debug_autoplay := false
+var autoplay_ending := "A"
 
 const RESOLVE_ENDING_A := 6            # >= this -> Ending A "Bình minh"
 
 func _ready() -> void:
-	debug_autoplay = "--autoplay" in OS.get_cmdline_user_args()
+	var args := OS.get_cmdline_user_args()
+	debug_autoplay = "--autoplay" in args
+	for arg in args:
+		if arg.begins_with("--ending="):
+			autoplay_ending = arg.trim_prefix("--ending=").to_upper()
 
 func reset() -> void:
 	chapter = 0

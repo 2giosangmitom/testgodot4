@@ -56,6 +56,11 @@ void fragment() {
 		uv = mix(UV, v_affine_uv.xy / v_affine_uv.z, aff);
 	}
 	vec4 dirt = texture(albedo_texture, uv) * albedo_color;
+	vec3 glass_tint = tint.rgb;
+	if (OUTPUT_IS_SRGB) {
+		dirt.rgb = psx_to_linear(dirt.rgb);
+		glass_tint = psx_to_linear(glass_tint);
+	}
 
 	vec3 cam = INV_VIEW_MATRIX[3].xyz;
 	vec3 view_dir = normalize(v_world_pos - cam);
@@ -68,19 +73,24 @@ void fragment() {
 
 	vec3 r = reflect(view_dir, n);
 	vec2 ruv = vec2(atan(r.x, r.z) / 6.2831853 + 0.5, 0.5 - r.y * 0.5);
-	vec3 refl = texture(reflection_texture, ruv).rgb * reflection_strength;
+	vec3 refl = texture(reflection_texture, ruv).rgb;
+	if (OUTPUT_IS_SRGB) {
+		refl = psx_to_linear(refl);
+	}
+	refl *= reflection_strength;
 	// Fake streaks: thin bright vertical bands sliding with the reflection direction.
 	float streak = step(0.93, fract(ruv.x * 7.0 + v_world_pos.y * 0.05)) * step(0.35, ruv.y) * step(ruv.y, 0.75);
 	refl += vec3(streak * streak_strength);
 
 	float ta = dirt.a * texture_opacity;
-	vec3 c = mix(tint.rgb * tint_energy, dirt.rgb, ta) + refl + vec3(fres) * 0.3;
+	vec3 c = mix(glass_tint * tint_energy, dirt.rgb, ta) + refl + vec3(fres) * 0.3;
 	float a = clamp(max(tint.a, ta) + fres + dot(refl, vec3(0.333)), 0.0, 1.0);
 
 	if (color_reduce) {
 		c = psx_reduce_linear(c, FRAGCOORD.xy, dither_strength);
 	}
 	float f = psx_fog_factor(length(VERTEX)) * fog_mult;
-	ALBEDO = mix(c, psx_fog_linear(), f);
+	vec3 fogged = mix(c, psx_fog_linear(), f);
+	ALBEDO = OUTPUT_IS_SRGB ? psx_to_srgb(fogged) : fogged;
 	ALPHA = a;
 }

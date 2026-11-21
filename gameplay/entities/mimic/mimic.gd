@@ -385,6 +385,8 @@ func _tick_corridor(delta: float) -> void:
 	if p == null:
 		return
 	var to := p.global_position - global_position
+	if absf(to.y) > 1.75:
+		return
 	to.y = 0.0
 	var dist := to.length()
 	# safe: player in the room with the door shut and locked
@@ -428,6 +430,13 @@ func _observed_by_player() -> bool:
 		return EntityObservation.ray_clear(get_world_3d().direct_space_state, a, b)
 	return EntityObservation.is_observed(cam.global_transform, cam.fov, vp.x / maxf(vp.y, 1.0),
 		body.get_sample_points(), EntityObservation.fog_visible_distance() * 0.95, 4.0, los)
+
+func is_directly_observed() -> bool:
+	var cam := get_player_camera()
+	if cam == null or not cam.is_inside_tree():
+		return false
+	var direction := (body.get_head_global_position() - cam.global_position).normalized()
+	return -cam.global_basis.z.dot(direction) > 0.97 and _observed_by_player()
 
 # ------------------------------------------------------------------ event listeners
 

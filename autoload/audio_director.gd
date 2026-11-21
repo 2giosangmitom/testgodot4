@@ -18,9 +18,13 @@ var _warned: Dictionary = {}
 var _amb_players: Dictionary = {}       # layer -> AudioStreamPlayer
 var _music: AudioStreamPlayer
 var _voice: AudioStreamPlayer
+var _music_tween: Tween
+var _silent := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# The dummy/headless backend cannot play audio; still resolve assets and lengths.
+	_silent = DisplayServer.get_name() == "headless"
 	_music = _make_player("Music")
 	_voice = _make_player("Voice")
 
@@ -41,7 +45,7 @@ func get_stream(kind: String, name: String) -> AudioStream:
 ## 2D one-shot. Returns the player (or null).
 func play_sfx(name: String, volume_db := 0.0, pitch := 1.0, bus := "SFX") -> AudioStreamPlayer:
 	var s := get_stream("sfx", name)
-	if s == null:
+	if s == null or _silent:
 		return null
 	var p := _make_player(bus)
 	p.stream = s
@@ -54,7 +58,7 @@ func play_sfx(name: String, volume_db := 0.0, pitch := 1.0, bus := "SFX") -> Aud
 ## Positional one-shot at a world position.
 func play_sfx_3d(name: String, position: Vector3, volume_db := 0.0, pitch := 1.0, bus := "SFX", max_distance := 20.0) -> AudioStreamPlayer3D:
 	var s := get_stream("sfx", name)
-	if s == null:
+	if s == null or _silent:
 		return null
 	var p := AudioStreamPlayer3D.new()
 	p.bus = bus
@@ -74,7 +78,7 @@ func play_sfx_3d(name: String, position: Vector3, volume_db := 0.0, pitch := 1.0
 func play_ambience(name: String, layer := "base", volume_db := 0.0, fade := 1.5) -> void:
 	var s := get_stream("amb", name)
 	stop_ambience(layer, fade)
-	if s == null:
+	if s == null or _silent:
 		return
 	_set_loop(s)
 	var p := _make_player("Amb")
@@ -99,26 +103,34 @@ func stop_all_ambience(fade := 1.5) -> void:
 
 func play_music(name: String, volume_db := 0.0, fade := 2.0) -> void:
 	var s := get_stream("music", name)
-	if s == null:
+	if s == null or _silent:
 		return
+	if _music_tween:
+		_music_tween.kill()
 	_set_loop(s)
 	_music.stream = s
 	_music.volume_db = -60.0
 	_music.play()
-	create_tween().tween_property(_music, "volume_db", volume_db, fade)
+	_music_tween = create_tween()
+	_music_tween.tween_property(_music, "volume_db", volume_db, fade)
 
 func stop_music(fade := 2.0) -> void:
-	var t := create_tween()
-	t.tween_property(_music, "volume_db", -60.0, fade)
-	t.tween_callback(_music.stop)
+	if not _music.playing:
+		return
+	if _music_tween:
+		_music_tween.kill()
+	_music_tween = create_tween()
+	_music_tween.tween_property(_music, "volume_db", -60.0, fade)
+	_music_tween.tween_callback(_music.stop)
 
 ## Plays a voice line by dialogue key. Returns its length in seconds (0 if missing).
 func play_voice(key: String) -> float:
 	var s := get_stream("voice", key)
 	if s == null:
 		return 0.0
-	_voice.stream = s
-	_voice.play()
+	if not _silent:
+		_voice.stream = s
+		_voice.play()
 	return s.get_length()
 
 func stop_voice() -> void:

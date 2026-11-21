@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://levels/dorm_shrine/dorm_shrine.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/models/env/dorm.glb" id="2"]
+[ext_resource type="PackedScene" path="res://assets/models/env/shrine.glb" id="3"]
+
+[node name="DormShrine" type="Node3D"]
+script = ExtResource("1")
+level_id = "dorm_shrine"
+default_preset = "night"
+
+[node name="Env" type="Node3D" parent="." groups=["dorm_shrine_navigation"]]
+
+[node name="Dorm" parent="Env" instance=ExtResource("2")]
+
+[node name="Shrine" parent="Env" instance=ExtResource("3")]
+
+[node name="Spawns" type="Node3D" parent="."]
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Presets" type="Node3D" parent="."]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="Triggers" type="Node3D" parent="."]
+
+[node name="Entities" type="Node3D" parent="."]
+
+[node name="NPCs" type="Node3D" parent="."]

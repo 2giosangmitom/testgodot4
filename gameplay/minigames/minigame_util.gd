@@ -54,8 +54,18 @@ static func find_barcode_axis(node: Node, relative_to: Node3D) -> Vector3:
 		return Vector3.ZERO
 	var v := axis_vector(axis_str)
 	if found is Node3D and relative_to and found != relative_to:
-		var rel: Basis = relative_to.global_basis.inverse() * (found as Node3D).global_basis
-		v = (rel * v).normalized()
+		# Products build their visuals before they are added to the tree. Compose the
+		# local bases along the model hierarchy instead of querying global transforms.
+		var ancestor := found
+		var basis := Basis.IDENTITY
+		while ancestor != null and ancestor != relative_to:
+			if ancestor is Node3D:
+				basis = (ancestor as Node3D).basis * basis
+			ancestor = ancestor.get_parent()
+		if ancestor == relative_to:
+			v = (basis * v).normalized()
+		elif found.is_inside_tree() and relative_to.is_inside_tree():
+			v = (relative_to.global_basis.inverse() * (found as Node3D).global_basis * v).normalized()
 	return v
 
 static func make_mat(color: Color, unshaded := false, emission := 0.0) -> StandardMaterial3D:

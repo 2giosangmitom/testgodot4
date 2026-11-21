@@ -104,8 +104,19 @@ func _ready() -> void:
 		phone._activate()   # first thread
 		await _frames(2)
 		check(GameState.get_flag("read_" + ids[0]) == true, "reading sets read_<msg_id>")
+		for action in ["move_forward", "move_back"]:
+			var before := player.global_position
+			Input.action_press(action)
+			await _frames(12)
+			Input.action_release(action)
+			check(absf(player.global_position.z - before.z) < 0.01, action + " does not move Nam while using phone")
 		phone.close()
 		check(not GameState.phone_open, "phone closed")
+		var before := player.global_position
+		Input.action_press("move_forward")
+		await _frames(12)
+		Input.action_release("move_forward")
+		check(player.global_position.z < before.z - 0.05, "movement resumes after closing phone")
 
 	# --- flashlight
 	player.set_flashlight(true)
@@ -123,6 +134,18 @@ func _ready() -> void:
 	player._crouch_toggled = false
 	await _frames(4)
 	check(not player.is_hidden(), "standing -> not hidden")
+
+	# Reproduce the 0.72 m clearance of the P.204 desk.
+	ProtoGeo.box(self, Vector3(1.2, 0.04, 0.85), Vector3(0, 0.74, 0), Color.GRAY)
+	player.teleport(Transform3D(Basis(), Vector3(0, 0, 0.8)))
+	player._crouch_toggled = true
+	Input.action_press("move_forward")
+	await _frames(55)
+	Input.action_release("move_forward")
+	check(absf(player.global_position.z) < 0.25, "crouching enters a 0.72 m desk")
+	player._crouch_toggled = false
+	await _frames(8)
+	check(player.is_crouching(), "cannot stand up through the underside of a desk")
 
 	print("\n%s (%d failures)" % ["OK" if failures == 0 else "FAILED", failures])
 	get_tree().quit(failures)

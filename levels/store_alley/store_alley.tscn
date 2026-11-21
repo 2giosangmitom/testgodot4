@@ -1,0 +1,385 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://levels/store_alley/store_alley.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/models/env/store.glb" id="2"]
+[ext_resource type="PackedScene" path="res://assets/models/env/alley.glb" id="3"]
+[ext_resource type="PackedScene" path="res://gameplay/props/door.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://assets/models/env/door_glass_shop.glb" id="5"]
+[ext_resource type="PackedScene" path="res://assets/models/env/door_wood.glb" id="6"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/checkout/checkout.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/shelf_stock/shelf_stock.tscn" id="8"]
+[ext_resource type="Script" path="res://levels/store_alley/supply_box.gd" id="9"]
+[ext_resource type="PackedScene" path="res://gameplay/minigames/mop/mop.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://assets/models/props/barcode_scanner.glb" id="11"]
+[ext_resource type="PackedScene" path="res://levels/store_alley/register.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://assets/models/props/cardboard_box_closed.glb" id="13"]
+[ext_resource type="PackedScene" path="res://assets/models/props/mop.glb" id="14"]
+[ext_resource type="PackedScene" path="res://assets/models/props/dirt_stain.glb" id="15"]
+[ext_resource type="PackedScene" path="res://gameplay/props/readable.tscn" id="16"]
+[ext_resource type="Script" path="res://core/interactable.gd" id="17"]
+[ext_resource type="PackedScene" path="res://gameplay/props/trigger_zone.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://gameplay/entities/gazer/gazer.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://assets/models/chars/gazer.glb" id="20"]
+[ext_resource type="PackedScene" path="res://assets/models/chars/chi_hanh.glb" id="21"]
+[ext_resource type="PackedScene" path="res://assets/models/chars/passerby_m1.glb" id="22"]
+[ext_resource type="PackedScene" path="res://assets/models/chars/student_f2.glb" id="23"]
+[ext_resource type="PackedScene" path="res://assets/models/chars/ba_cu.glb" id="24"]
+[ext_resource type="PackedScene" path="res://assets/models/props/small_desk.glb" id="25"]
+[ext_resource type="Script" path="res://core/lighting_preset.gd" id="26"]
+[ext_resource type="PackedScene" path="res://gameplay/props/hide_spot.tscn" id="27"]
+[ext_resource type="Script" path="res://render/fixed_camera.gd" id="28"]
+[ext_resource type="PackedScene" path="res://assets/models/chars/linh.glb" id="29"]
+[ext_resource type="Texture2D" path="res://assets/textures/env/notice_paper.png" id="30"]
+
+[sub_resource type="BoxShape3D" id="DrawerShape"]
+size = Vector3(0.47, 0.2, 0.26)
+
+[sub_resource type="BoxShape3D" id="DeskShape"]
+size = Vector3(0.75, 0.73, 0.48)
+
+[sub_resource type="BoxShape3D" id="AltarShape"]
+size = Vector3(0.85, 0.64, 0.22)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh"]
+resource_local_to_scene = true
+geometry_parsed_geometry_type = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = &"store_alley_navigation"
+cell_size = 0.1
+cell_height = 0.1
+agent_height = 1.8
+agent_radius = 0.2
+agent_max_climb = 0.2
+region_min_size = 2.0
+
+[node name="StoreAlley" type="Node3D"]
+script = ExtResource("1")
+level_id = "store_alley"
+default_preset = "night_store"
+
+[node name="Env" type="Node3D" parent="." groups=["store_alley_navigation"]]
+
+[node name="Store" parent="Env" instance=ExtResource("2")]
+
+[node name="Alley" parent="Env" instance=ExtResource("3")]
+
+[node name="BoxSpot" type="Marker3D" parent="Env"]
+position = Vector3(4.72, 0.73, -9.52)
+rotation = Vector3(0, -1.5707963, 0)
+
+[node name="Spawns" type="Node3D" parent="."]
+
+[node name="default" type="Marker3D" parent="Spawns"]
+
+[node name="door" type="Marker3D" parent="Spawns"]
+
+[node name="alley_start" type="Marker3D" parent="Spawns"]
+
+[node name="front_street" type="Marker3D" parent="Spawns"]
+position = Vector3(3.55, 0, 2.05)
+
+[node name="alley_mid" type="Marker3D" parent="Spawns"]
+position = Vector3(-4, 0, -27.9)
+rotation = Vector3(0, 1.5707963, 0)
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="cam_store_wide" type="Camera3D" parent="Markers"]
+script = ExtResource("28")
+fov = 72.0
+
+[node name="cam_outside_glass" type="Camera3D" parent="Markers"]
+script = ExtResource("28")
+
+[node name="cam_alley" type="Camera3D" parent="Markers"]
+script = ExtResource("28")
+
+[node name="cam_counter" type="Camera3D" parent="Markers"]
+script = ExtResource("28")
+
+[node name="cam_alley_corner" type="Camera3D" parent="Markers"]
+script = ExtResource("28")
+
+[node name="cam_alley_exit" type="Camera3D" parent="Markers"]
+script = ExtResource("28")
+
+[node name="npc_counter" type="Marker3D" parent="Markers"]
+position = Vector3(3.75, 0, -1.05)
+rotation = Vector3(0, 3.1415927, 0)
+
+[node name="npc_door" type="Marker3D" parent="Markers"]
+position = Vector3(3.5, 0, -0.55)
+
+[node name="npc_exit" type="Marker3D" parent="Markers"]
+position = Vector3(3.55, 0, 0.95)
+
+[node name="gazer_1" type="Marker3D" parent="Markers"]
+[node name="gazer_2" type="Marker3D" parent="Markers"]
+[node name="gazer_3" type="Marker3D" parent="Markers"]
+[node name="gazer_4" type="Marker3D" parent="Markers"]
+[node name="gazer_5" type="Marker3D" parent="Markers"]
+[node name="gazer_6" type="Marker3D" parent="Markers"]
+
+[node name="hunt_1" type="Marker3D" parent="Markers"]
+position = Vector3(4.2, 0, -13.1)
+
+[node name="hunt_2" type="Marker3D" parent="Markers"]
+position = Vector3(4.12, 0, -23.7)
+
+[node name="hunt_3" type="Marker3D" parent="Markers"]
+position = Vector3(-4.0, 0, -27.9)
+
+[node name="hunt_4" type="Marker3D" parent="Markers"]
+position = Vector3(-13.9, 0, -34.5)
+
+[node name="hunt_5" type="Marker3D" parent="Markers"]
+position = Vector3(-14.1, 0, -50.8)
+
+[node name="alley_exit" type="Marker3D" parent="Markers"]
+
+[node name="CheckoutAnchors" type="Node3D" parent="Markers"]
+
+[node name="Scanner" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(4.3, 1.08, -2.1)
+rotation = Vector3(0, 3.1415927, 0)
+
+[node name="ScanPoint" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(4.3, 1.205, -2.205)
+rotation = Vector3(0.65, 0, 0)
+
+[node name="Register" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(3.6, 1.0, -2.28)
+rotation = Vector3(0, 3.1415927, 0)
+
+[node name="BagSpot" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(4.91, 1.0, -1.91)
+rotation = Vector3(0, 3.1415927, 0)
+
+[node name="Customer" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(3.75, 0, -0.96)
+rotation = Vector3(0, 0, 0)
+
+[node name="CustomerExit" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(3.53, 0, -0.14)
+rotation = Vector3(0, 3.1415927, 0)
+
+[node name="item_spot_1" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(3.18, 1.0, -2.37)
+
+[node name="item_spot_2" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(3.37, 1.0, -2.39)
+
+[node name="item_spot_3" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(3.57, 1.0, -2.41)
+
+[node name="item_spot_4" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(3.77, 1.0, -2.41)
+
+[node name="item_spot_5" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(3.96, 1.0, -2.36)
+
+[node name="item_spot_6" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(4.14, 1.0, -2.37)
+
+[node name="item_spot_7" type="Marker3D" parent="Markers/CheckoutAnchors"]
+position = Vector3(4.58, 1.0, -2.36)
+
+[node name="MopAnchors" type="Node3D" parent="Markers"]
+
+[node name="MopSpot" type="Marker3D" parent="Markers/MopAnchors"]
+position = Vector3(2.98, 0, -11.53)
+rotation = Vector3(0, 3.1415927, 0)
+
+[node name="stain_1" type="Marker3D" parent="Markers/MopAnchors"]
+position = Vector3(-4.04, 0, -3.6)
+
+[node name="stain_2" type="Marker3D" parent="Markers/MopAnchors"]
+position = Vector3(-2.4, 0, -4.85)
+rotation = Vector3(0, 1.4, 0)
+
+[node name="stain_3" type="Marker3D" parent="Markers/MopAnchors"]
+position = Vector3(-0.8, 0, -3.8)
+rotation = Vector3(0, 3.1, 0)
+
+[node name="stain_4" type="Marker3D" parent="Markers/MopAnchors"]
+position = Vector3(0.8, 0, -4.55)
+rotation = Vector3(0, 4.0, 0)
+
+[node name="Presets" type="Node3D" parent="."]
+
+[node name="night_store" type="Node3D" parent="Presets"]
+script = ExtResource("26")
+fog_preset = "night_store"
+ambience = "amb_store_night"
+ambience_hum = "hum_fluorescent"
+clock_hours = 22
+
+[node name="dusk_store" type="Node3D" parent="Presets"]
+visible = false
+script = ExtResource("26")
+fog_preset = "dusk"
+ambience = "amb_street_day"
+ambience_hum = "hum_fluorescent"
+clock_hours = 17
+
+[node name="alley_predawn" type="Node3D" parent="Presets"]
+visible = false
+script = ExtResource("26")
+fog_preset = "night"
+ambience = "amb_alley_night"
+clock_hours = 5
+
+[node name="ch4_night" type="Node3D" parent="Presets"]
+visible = false
+script = ExtResource("26")
+fog_preset = "dread"
+ambience = "amb_street_dead"
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="ShopDoor" parent="Doors" groups=["see_through"] instance=ExtResource("4")]
+position = Vector3(3.05, 0, 0)
+door_id = "shop_front"
+open_time = 0.9
+
+[node name="Leaf" parent="Doors/ShopDoor" instance=ExtResource("5")]
+
+[node name="StoreroomDoor" parent="Doors" instance=ExtResource("4")]
+position = Vector3(3.55, 0, -8.10)
+door_id = "storeroom"
+
+[node name="Leaf" parent="Doors/StoreroomDoor" instance=ExtResource("6")]
+
+[node name="BackDoor" parent="Doors" instance=ExtResource("4")]
+position = Vector3(4.85, 0, -12.1)
+rotation = Vector3(0, 3.1415927, 0)
+door_id = "back_door"
+open_angle = 90.0
+
+[node name="Leaf" parent="Doors/BackDoor" instance=ExtResource("6")]
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="Checkout" parent="Interactables" instance=ExtResource("7")]
+build_placeholder = false
+anchors_root = NodePath("../../Markers/CheckoutAnchors")
+customer_scene = ExtResource("22")
+scanner_model = ExtResource("11")
+register_model = ExtResource("12")
+
+[node name="ShelfStock" parent="Interactables" instance=ExtResource("8")]
+script = ExtResource("9")
+build_placeholder = false
+anchors_root = NodePath("../../Env")
+slot_prefix = "slot_2_"
+slot_size = Vector3(0.28, 0.23, 0.4)
+tag_offset = Vector3(0, -0.045, 0.123)
+box_model = ExtResource("13")
+
+[node name="Mop" parent="Interactables" instance=ExtResource("10")]
+build_placeholder = false
+anchors_root = NodePath("../../Markers/MopAnchors")
+mop_model = ExtResource("14")
+stain_scene = ExtResource("15")
+haunted_stain_index = 1
+
+[node name="RulesNote" parent="Interactables" instance=ExtResource("16")]
+position = Vector3(3.8, 1.69, -3.53)
+readable_id = "rules_note"
+
+[node name="Paper" type="Sprite3D" parent="Interactables/RulesNote"]
+texture = ExtResource("30")
+texture_filter = 0
+shaded = true
+double_sided = false
+pixel_size = 0.004
+
+[node name="Drawer" type="StaticBody3D" parent="Interactables"]
+position = Vector3(4.44, 0.66, -9.52)
+script = ExtResource("17")
+prompt = "Mở ngăn kéo"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interactables/Drawer"]
+shape = SubResource("DrawerShape")
+
+[node name="NameTagStore" parent="Interactables/Drawer" instance=ExtResource("16")]
+visible = false
+readable_id = "name_tag_store"
+enabled = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interactables/Drawer/NameTagStore"]
+disabled = true
+shape = SubResource("DrawerShape")
+
+[node name="DrawerDesk" type="StaticBody3D" parent="Interactables" groups=["store_alley_navigation"]]
+position = Vector3(4.72, 0, -9.52)
+rotation = Vector3(0, -1.5707963, 0)
+
+[node name="Model" parent="Interactables/DrawerDesk" instance=ExtResource("25")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interactables/DrawerDesk"]
+position = Vector3(0, 0.365, 0)
+shape = SubResource("DeskShape")
+
+[node name="AlleyAltar" type="StaticBody3D" parent="Interactables"]
+script = ExtResource("17")
+prompt = "Thắp nhang"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interactables/AlleyAltar"]
+position = Vector3(0, 0.29, 0.065)
+shape = SubResource("AltarShape")
+
+[node name="Triggers" type="Node3D" parent="."]
+
+[node name="trig_alley_enter" parent="Triggers" instance=ExtResource("18")]
+position = Vector3(4.41, 0, -13.48)
+trigger_id = "trig_alley_enter"
+size = Vector3(1.85, 2.15, 1.55)
+
+[node name="trig_alley_end" parent="Triggers" instance=ExtResource("18")]
+position = Vector3(-14, 0, -52.5)
+trigger_id = "trig_alley_end"
+size = Vector3(2.1, 2.15, 1.5)
+
+[node name="trig_store_front_ch4" parent="Triggers" instance=ExtResource("18")]
+position = Vector3(3.58, 0, 1.18)
+trigger_id = "trig_store_front_ch4"
+size = Vector3(1.25, 2.15, 0.95)
+
+[node name="HideCounter" parent="Triggers" instance=ExtResource("27")]
+position = Vector3(3.8, 0, -2.95)
+size = Vector3(1.85, 0.85, 0.82)
+
+[node name="Entities" type="Node3D" parent="."]
+
+[node name="Gazer" parent="Entities" instance=ExtResource("19")]
+model_scene = ExtResource("20")
+flicker_group = "store_lights"
+path_markers = Array[NodePath]([NodePath("../../Markers/gazer_1"), NodePath("../../Markers/gazer_2"), NodePath("../../Markers/gazer_3"), NodePath("../../Markers/gazer_4"), NodePath("../../Markers/gazer_5"), NodePath("../../Markers/gazer_6")])
+
+[node name="GazerHunt" parent="Entities" instance=ExtResource("19")]
+entity_id = "gazer_hunt"
+mode = 1
+model_scene = ExtResource("20")
+flicker_group = "alley_lights"
+path_markers = Array[NodePath]([NodePath("../../Markers/hunt_1"), NodePath("../../Markers/hunt_2"), NodePath("../../Markers/hunt_3"), NodePath("../../Markers/hunt_4"), NodePath("../../Markers/hunt_5")])
+
+[node name="NPCs" type="Node3D" parent="."]
+
+[node name="Hanh" parent="NPCs" instance=ExtResource("21")]
+visible = false
+
+[node name="Customer1" parent="NPCs" instance=ExtResource("22")]
+visible = false
+
+[node name="Customer2" parent="NPCs" instance=ExtResource("23")]
+visible = false
+
+[node name="OldLady" parent="NPCs" instance=ExtResource("24")]
+visible = false
+
+[node name="Linh" parent="NPCs" instance=ExtResource("29")]
+visible = false
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh")

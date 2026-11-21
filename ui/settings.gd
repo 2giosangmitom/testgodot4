@@ -8,6 +8,7 @@ extends Control
 signal closed
 
 const BUSES := [["Master", "Âm lượng chung"], ["Music", "Nhạc"], ["Amb", "Môi trường"], ["SFX", "Hiệu ứng"], ["Voice", "Lồng tiếng"]]
+const MIX_TRIM_DB := {"Music": -3.0, "Amb": -3.0}
 
 var _first: Control
 var _panel: PanelContainer
@@ -21,7 +22,7 @@ static func _apply_bus(bus: String, v: float) -> void:
 	var idx := AudioServer.get_bus_index(bus)
 	if idx < 0:
 		return
-	AudioServer.set_bus_volume_db(idx, linear_to_db(maxf(v, 0.0001)))
+	AudioServer.set_bus_volume_db(idx, linear_to_db(maxf(v, 0.0001)) + float(MIX_TRIM_DB.get(bus, 0.0)))
 	AudioServer.set_bus_mute(idx, v <= 0.001)
 
 static func _apply_fullscreen(on: bool) -> void:

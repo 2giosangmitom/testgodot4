@@ -34,7 +34,7 @@ static func defaults() -> Array[MinigameProduct]:
 	out.append(make("Mì gói", "mi_goi", 5000, Vector3(0.13, 0.04, 0.10), Color(0.85, 0.65, 0.15), 0,
 		"res://assets/models/props/instant_noodle_pack.glb"))
 	out.append(make("Nước ngọt", "nuoc_ngot", 12000, Vector3(0.066, 0.12, 0.066), Color(0.75, 0.12, 0.1), 1,
-		"res://assets/models/props/can_drink.glb"))
+		"res://assets/models/props/can_cam.glb"))
 	out.append(make("Bánh quy", "banh_quy", 18000, Vector3(0.14, 0.05, 0.09), Color(0.55, 0.35, 0.2), 0))
 	out.append(make("Sữa hộp", "sua_hop", 8000, Vector3(0.06, 0.1, 0.04), Color(0.85, 0.88, 0.95), 0))
 	out.append(make("Nước suối", "nuoc_suoi", 6000, Vector3(0.065, 0.16, 0.065), Color(0.45, 0.65, 0.85), 1))

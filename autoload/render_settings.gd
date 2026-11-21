@@ -8,7 +8,7 @@ const FOG_PRESETS := {
 	"dusk":       {"near": 10.0, "far": 18.0, "color": Color(0.32, 0.24, 0.24)},
 	"night":      {"near": 6.0,  "far": 10.0, "color": Color(0.03, 0.03, 0.04)},
 	"night_store":{"near": 8.0,  "far": 14.0, "color": Color(0.04, 0.05, 0.05)},
-	"dread":      {"near": 3.0,  "far": 7.0,  "color": Color(0.02, 0.01, 0.01)},
+	"dread":      {"near": 3.5,  "far": 8.0,  "color": Color(0.024, 0.016, 0.016)},
 	"dawn":       {"near": 12.0, "far": 24.0, "color": Color(0.55, 0.50, 0.46)},
 }
 

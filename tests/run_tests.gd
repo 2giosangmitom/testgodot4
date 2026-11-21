@@ -1,6 +1,5 @@
 extends SceneTree
 ## Main-session logic tests: godot --headless --path . -s res://tests/run_tests.gd
-## Autoloads are not available in -s mode, so autoload scripts are instanced manually.
 
 var failures := 0
 
@@ -9,10 +8,13 @@ func check(cond: bool, name: String) -> void:
 	if not cond:
 		failures += 1
 
-func _init() -> void:
+func _initialize() -> void:
+	await process_frame
 	_test_dialogue_data()
 	_test_voice_coverage()
 	_test_checkpoint_parse()
+	_test_chapter_scripts()
+	_test_ending_threshold()
 	print("\n%s (%d failures)" % ["OK" if failures == 0 else "FAILED", failures])
 	quit(1 if failures else 0)
 
@@ -56,5 +58,24 @@ func _test_voice_coverage() -> void:
 	check(missing.is_empty(), "voice file for every line (missing %d: %s)" % [missing.size(), missing.slice(0, 5)])
 
 func _test_checkpoint_parse() -> void:
-	var cd = load("res://autoload/chapter_director.gd")
+	var cd := root.get_node_or_null("ChapterDirector")
+	if cd == null:
+		check(false, "ChapterDirector is loaded")
+		return
 	check(cd.chapter_of("ch2_dorm") == 2 and cd.chapter_of("ch4_shrine") == 4 and cd.chapter_of("") == 0, "checkpoint -> chapter")
+
+func _test_chapter_scripts() -> void:
+	for chapter in ["ch1", "ch2", "ch3", "ch4", "ending_a", "ending_b"]:
+		var path := "res://chapters/%s.gd" % chapter
+		var script := load(path) as Script
+		check(script != null and script.can_instantiate(), chapter + " script compiles")
+
+func _test_ending_threshold() -> void:
+	var state := root.get_node("GameState")
+	state.set_flag("shrine_lamp_relit")
+	state.resolve = 5
+	check(state.compute_ending() == "B", "lit lamp with insufficient resolve ends in B")
+	state.resolve = 6
+	check(state.compute_ending() == "A", "lit lamp with minimum resolve ends in A")
+	state.set_flag("shrine_lamp_relit", false)
+	check(state.compute_ending() == "B", "unlit lamp ends in B even with sufficient resolve")
