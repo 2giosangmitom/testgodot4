@@ -89,7 +89,7 @@ fog is done in the PSX shaders so it is identical everywhere. Background clear c
 `get_hold_point() -> Node3D` (in front of camera). Respects `GameState.is_input_locked()`.
 Emits `EventBus.noise_emitted` from footsteps (walk 0.15, crouch 0.05, sprint 0.8).
 
-**Render**: `res://render/psx_root.tscn` is NOT required — the game uses the project's 640x480 viewport stretch.
+**Render**: `res://render/psx_root.tscn` is NOT required — the game uses the project's widescreen 864×486 viewport stretch.
 Post-fx is a CanvasLayer scene `res://render/post_fx.tscn` that UI/levels instance once (B instances it in the HUD).
 Materials: `res://render/materials/psx_lit.tres` etc.; shaders in `res://render/shaders/`.
 A helper `res://render/psx_material_factory.gd` (`static func make(albedo: Texture2D, opts := {}) -> ShaderMaterial`) and
@@ -141,5 +141,5 @@ and, for runtime checks, `godot --headless --path . res://<your_test>.tscn --qui
 - Door API (`gameplay/props/door.gd`): `door_id`, `locked`, `is_locked()`, `is_open`, `lock()`, `unlock()`, `close()`,
   `open_door()`, `force_open(duration)` (ignores lock), `peek_open(angle)`; emits `EventBus.door_state_changed`.
 - Reading a phone thread sets GameState flag `read_<msg_id>`.
-- Extreme mode (320x240): the 3D scene is rendered at 0.5 scale with nearest filtering; UI stays 640x480.
+- Low-resolution mode: the 3D scene is rendered at 0.5 scale with nearest filtering; the UI remains at its original resolution.
 - Crouched eye height 0.9 m: hide volumes must cover desk/counter plus the space in front of them (you cannot crawl under a 0.75 m desk).

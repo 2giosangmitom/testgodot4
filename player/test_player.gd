@@ -30,7 +30,7 @@ func _ready() -> void:
 	GameState.chapter = 2
 	DebugShot.attach_if_requested(self)
 	if DebugShot.get_arg("lowres") != "":
-		# preview of the proposed extreme mode: 3D at half res (nearest), UI stays 640x480
+		# Preview 3D at half resolution (nearest) without shrinking the HUD.
 		get_viewport().scaling_3d_mode = Viewport.SCALING_3D_MODE_NEAREST
 		get_viewport().scaling_3d_scale = 0.5
 	var demo := DebugShot.get_arg("demo")
@@ -70,8 +70,7 @@ func _build_room() -> void:
 		for z in [-0.34, 0.34]:
 			ProtoGeo.box(table, Vector3(0.06, 0.72, 0.06), Vector3(x, 0.36, z), Color(0.3, 0.22, 0.15))
 	var hide: HideSpot = HIDE.instantiate()
-	# crouched eye height is 0.9 m (above a 0.75 m desk), so the volume covers the desk's
-	# footprint plus the knee space in front of it
+	# The hide volume covers the desk's footprint and the space in front of it.
 	hide.size = Vector3(1.4, 1.0, 1.5)
 	hide.position = Vector3(0, 0, 0.35)
 	table.add_child(hide)

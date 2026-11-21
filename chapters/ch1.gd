@@ -63,7 +63,8 @@ func _store() -> void:
 		GameState.set_flag("read_rules")
 	objective("night_stock", "Xếp hàng lên kệ số 2")
 	objective("night_clean", "Lau sàn")
-	objective("night_checkout", "Tính tiền cho hai khách")
+	objective("night_checkout_1", "Tính tiền cho khách thứ nhất")
+	objective("night_checkout_2", "Tính tiền cho khách thứ hai")
 	shelves.completed.connect(func(): GameState.complete_objective("night_stock"))
 	mop.completed.connect(func(): GameState.complete_objective("night_clean"))
 	shelves.start()
@@ -75,6 +76,7 @@ func _store() -> void:
 	await say(["ch1_khach_01"])
 	if not await play_minigame(checkout):
 		return
+	GameState.complete_objective("night_checkout_1")
 	GameState.set_clock(23, 50)
 	checkout.customer_scene = EntityBase.find_char_model("student_f2")
 	checkout.item_count = 7
@@ -83,7 +85,7 @@ func _store() -> void:
 	AudioDirector.play_sfx("shop_bell")
 	if not await play_minigame(checkout):
 		return
-	GameState.complete_objective("night_checkout")
+	GameState.complete_objective("night_checkout_2")
 	GameState.set_clock(0, 30)
 	gazer.nonlethal_stare = true
 	var froze := [false]

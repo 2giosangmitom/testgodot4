@@ -14,6 +14,7 @@ signal player_spawned(player: Node3D)
 # --- Objectives / story ---
 signal objective_added(id: String, text: String)
 signal objective_completed(id: String)
+signal objectives_reset()
 signal minigame_completed(id: String)
 signal message_received(msg_id: String)
 signal flag_changed(flag: String, value: Variant)

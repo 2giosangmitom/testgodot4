@@ -5,6 +5,7 @@ extends CanvasLayer
 const THEME := preload("res://ui/theme.tres")
 const PHONE_SCENE := "res://ui/phone/phone.tscn"
 const PAUSE_SCENE := "res://ui/pause_menu.tscn"
+const OBJECTIVE_TRACKER := preload("res://ui/objective_tracker.gd")
 
 const SPEAKER_COLORS := {
 	"Nam": Color(0.95, 0.88, 0.55),
@@ -43,8 +44,6 @@ var _sub_t := 0.0
 var _sub_active := false
 var _choice_count := 0
 var _letterbox := false
-var _last_objective_text := ""
-var _last_objective_ms := 0
 
 func _ready() -> void:
 	layer = 100
@@ -59,6 +58,9 @@ func _ready() -> void:
 	_build_crosshair()
 	_build_stamina()
 	_build_toasts()
+	var tracker := OBJECTIVE_TRACKER.new()
+	tracker.name = "ObjectiveTracker"
+	root.add_child(tracker)
 	_build_subtitles()
 	_build_choices()
 	fade_layer = FadeLayer.new()
@@ -76,9 +78,7 @@ func _ready() -> void:
 	EventBus.choice_requested.connect(show_choice)
 	EventBus.choice_made.connect(func(_i: int): _hide_choice())
 	EventBus.letterbox.connect(set_letterbox)
-	EventBus.toast.connect(_on_toast)
-	EventBus.objective_added.connect(_on_objective_added)
-	EventBus.objective_completed.connect(_on_objective_completed)
+	EventBus.toast.connect(func(text: String): toast(text))
 	EventBus.checkpoint_reached.connect(func(_id: String): toast("Đã lưu tiến trình", Color(0.6, 0.6, 0.6)))
 	EventBus.player_caught.connect(func(_e: String, _c: String): _on_prompt(""); clear_subtitle(); _hide_choice())
 
@@ -215,23 +215,6 @@ func toast(text: String, color := Color(0.86, 0.84, 0.78), seconds := 4.0) -> vo
 	t.tween_interval(seconds)
 	t.tween_property(l, "modulate:a", 0.0, 0.8)
 	t.tween_callback(l.queue_free)
-
-func _on_toast(text: String) -> void:
-	# ChapterScript.objective() emits objective_added AND toast(text): avoid a duplicate.
-	if text == _last_objective_text and Time.get_ticks_msec() - _last_objective_ms < 1500:
-		return
-	toast(text)
-
-func _on_objective_added(_id: String, text: String) -> void:
-	_last_objective_text = text
-	_last_objective_ms = Time.get_ticks_msec()
-	toast("Nhiệm vụ: " + text, ACCENT, 5.0)
-	AudioDirector.play_sfx("ui_select", -10.0)
-
-func _on_objective_completed(id: String) -> void:
-	for o in GameState.objectives:
-		if o.id == id:
-			toast("Đã xong: " + str(o.text), Color(0.6, 0.6, 0.55), 3.0)
 
 # ------------------------------------------------------------------ subtitles
 func show_subtitle(speaker: String, text: String, duration: float) -> void:

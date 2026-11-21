@@ -16,7 +16,7 @@ var _panel: PanelContainer
 static func apply_saved() -> void:
 	for b in BUSES:
 		_apply_bus(b[0], float(SaveSystem.get_setting("vol_" + b[0], 1.0 if b[0] != "Music" else 0.8)))
-	_apply_fullscreen(bool(SaveSystem.get_setting("fullscreen", false)))
+	_apply_fullscreen(bool(SaveSystem.get_setting("fullscreen", true)))
 
 static func _apply_bus(bus: String, v: float) -> void:
 	var idx := AudioServer.get_bus_index(bus)
@@ -70,9 +70,9 @@ func _ready() -> void:
 			_apply_bus(bus, x))
 	_slider_row(grid, "Độ nhạy chuột", 0.03, 0.4, 0.01, float(SaveSystem.get_setting("mouse_sens", 0.12)), func(x: float):
 		SaveSystem.set_setting("mouse_sens", x))
-	_check_row(v, "Chế độ cực đoan 320x240", bool(SaveSystem.get_setting("low_res", false)), func(on: bool):
+	_check_row(v, "Độ phân giải 3D thấp", bool(SaveSystem.get_setting("low_res", false)), func(on: bool):
 		RenderSettings.set_low_res(on))
-	_check_row(v, "Toàn màn hình", bool(SaveSystem.get_setting("fullscreen", false)), func(on: bool):
+	_check_row(v, "Toàn màn hình", bool(SaveSystem.get_setting("fullscreen", true)), func(on: bool):
 		SaveSystem.set_setting("fullscreen", on)
 		_apply_fullscreen(on))
 	_check_row(v, "Phụ đề", bool(SaveSystem.get_setting("subtitles", true)), func(on: bool):

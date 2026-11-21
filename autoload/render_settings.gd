@@ -12,7 +12,7 @@ const FOG_PRESETS := {
 	"dawn":       {"near": 12.0, "far": 24.0, "color": Color(0.55, 0.50, 0.46)},
 }
 
-var low_res := false            # true -> 320x240 snapping ("extreme" mode)
+var low_res := false            # true -> half-resolution 3D ("extreme" mode)
 var current_preset := "night"
 var _static := 0.0
 var _fog_near := 6.0
@@ -22,21 +22,21 @@ var _fog_color := Color(0.03, 0.03, 0.04)
 func _ready() -> void:
 	low_res = SaveSystem.get_setting("low_res", false)
 	apply_snap()
+	get_viewport().size_changed.connect(_update_snap_grid)
 	set_fog_preset("night", 0.0)
 	SettingsMenu.apply_saved()
 
 func apply_snap() -> void:
-	# UI always stays 640x480. Extreme mode renders the 3D scene at 320x240 (nearest upscale),
-	# which keeps the UI crisp while making the world blocky. Vertices snap to a 320x240 grid
-	# (160x120 in extreme mode) for the PS1 wobble.
+	# Only the 3D render scale changes. The HUD keeps the project's widescreen viewport.
 	var vp := get_tree().root
-	vp.content_scale_size = Vector2i(640, 480)
-	vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
-	vp.scaling_3d_scale = 1.0
-	if low_res:
-		vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_NEAREST
-		vp.scaling_3d_scale = 0.5
-	var snap := Vector2(160, 120) if low_res else Vector2(320, 240)
+	vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_NEAREST if low_res else Viewport.SCALING_3D_MODE_BILINEAR
+	vp.scaling_3d_scale = 0.5 if low_res else 1.0
+	_update_snap_grid()
+
+func _update_snap_grid() -> void:
+	var size := get_viewport().get_visible_rect().size
+	var rows := 90.0 if low_res else 180.0
+	var snap := Vector2(roundf(rows * size.x / maxf(size.y, 1.0)), rows)
 	RenderingServer.global_shader_parameter_set("psx_snap_resolution", snap)
 
 func set_low_res(on: bool) -> void:

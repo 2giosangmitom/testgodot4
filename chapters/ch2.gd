@@ -68,10 +68,8 @@ func _dorm() -> void:
 	GameState.complete_objective("ch2_noodles")
 	GameState.set_clock(22, 5)
 	messages(["m_ch2_linh_01"])
-	objective("ch2_bedtime", "Khóa cửa, tắt đèn rồi đi ngủ")
-	if not await play_minigame(routine):
+	if not await _bedtime(routine, "ch2_bedtime"):
 		return
-	GameState.complete_objective("ch2_bedtime")
 	var room_spawn := level.get_spawn("room")
 	GameState.player.teleport(room_spawn.global_transform)
 	GameState.set_clock(23, 40)
@@ -150,7 +148,11 @@ func _breaker() -> void:
 		award("ch2_ignored_linh")
 	GameState.complete_objective("ch2_power")
 	GameState.set_clock(3)
-	objective("ch2_return", "Quay về phòng P.204, khóa cửa và ngủ")
+	objective("ch2_return", "Quay về phòng P.204")
+	var room_entry := node("Triggers/trig_room") as TriggerZone
+	if room_entry == null:
+		return
+	room_entry.reset()
 	var mirror := node("Interactables/Mirror") as Interactable
 	if not active():
 		return
@@ -159,9 +161,11 @@ func _breaker() -> void:
 		AudioDirector.play_sfx("static_burst", -16.0)
 		if active():
 			say(["ch2_nam_05"]), CONNECT_ONE_SHOT)
-	if not await play_minigame(routine):
+	if not await wait_trigger("trig_room"):
 		return
 	GameState.complete_objective("ch2_return")
+	if not await _bedtime(routine, "ch2_after_power"):
+		return
 	await card("Hết chương 2")
 	wake_up()
 
@@ -169,3 +173,12 @@ func _corridor_voice(corridor: Mimic) -> void:
 	await say(["ch2_mimic_linh_01"])
 	if active() and is_instance_valid(corridor) and corridor.is_active():
 		await say(["ch2_mimic_linh_02"])
+
+func _bedtime(routine: MinigameRoomRoutine, prefix: String) -> bool:
+	for entry in [["check_door_lock", "Khóa cửa P.204"], ["lamp_switch_off", "Tắt đèn phòng"],
+			["go_to_sleep", "Đi ngủ trên gác"]]:
+		var task_id := "%s_%s" % [prefix, entry[0]]
+		var part := routine.get_part(entry[0])
+		objective(task_id, entry[1])
+		part.completed.connect(GameState.complete_objective.bind(task_id))
+	return await play_minigame(routine)

@@ -11,6 +11,9 @@ const HOLO := Color(0.2, 0.71, 0.9)
 const TEXT := Color(0.88, 0.9, 0.9)
 const DIM := Color(0.5, 0.53, 0.55)
 const BODY_SIZE := Vector2(SCREEN.x * SCALE + 24, SCREEN.y * SCALE + 70)
+const PHONE_X := -BODY_SIZE.x - 14.0
+const PHONE_Y := -BODY_SIZE.y + 28.0
+const NOTIF_Y := -76.0
 const DAYS := {0: "Thứ Hai, 06/11", 1: "Thứ Hai, 06/11", 2: "Thứ Ba, 07/11", 3: "Thứ Tư, 08/11", 4: "Thứ Tư, 08/11"}
 
 enum View { LOCK, HOME, TODO, THREADS, THREAD }
@@ -33,14 +36,13 @@ var notif: PanelContainer
 var notif_label: Label
 var _tween: Tween
 var _shake := 0.0
-var _home_y := 0.0
+var _notif_tween: Tween
 
 func _ready() -> void:
 	layer = 95
 	add_to_group("phone")
 	_build()
-	body.position = Vector2(640 - BODY_SIZE.x - 14, 480 + 8)
-	_home_y = 480 - BODY_SIZE.y + 34
+	body.position = Vector2(PHONE_X, 8.0)
 	body.visible = false
 	EventBus.message_received.connect(_on_message)
 	EventBus.player_caught.connect(func(_e: String, _c: String): close())
@@ -51,6 +53,11 @@ func _exit_tree() -> void:
 
 # ------------------------------------------------------------------ build
 func _build() -> void:
+	# A fixed origin in the lower-right corner keeps both slides relative to the viewport.
+	var corner := Control.new()
+	corner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(corner)
+	corner.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
 	body = Panel.new()
 	body.name = "Body"
 	body.size = BODY_SIZE
@@ -63,7 +70,7 @@ func _build() -> void:
 	sb.set_corner_radius_all(14)
 	sb.anti_aliasing = false
 	body.add_theme_stylebox_override("panel", sb)
-	add_child(body)
+	corner.add_child(body)
 	# earpiece + brand
 	var ear := ColorRect.new()
 	ear.color = Color(0.04, 0.04, 0.04)
@@ -119,10 +126,10 @@ func _build() -> void:
 	notif_label = Label.new()
 	notif_label.add_theme_font_size_override("font_size", 16)
 	notif.add_child(notif_label)
-	notif.position = Vector2(640, 380)
+	notif.position = Vector2(0, NOTIF_Y)
 	notif.visible = false
 	notif.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(notif)
+	corner.add_child(notif)
 
 func _build_screen() -> void:
 	screen = Control.new()
@@ -215,7 +222,7 @@ func open() -> void:
 	sel = 0
 	_refresh()
 	body.visible = true
-	_slide(_home_y)
+	_slide(PHONE_Y)
 
 func close() -> void:
 	if not is_open:
@@ -224,7 +231,7 @@ func close() -> void:
 	GameState.phone_open = false
 	EventBus.phone_toggled.emit(false)
 	AudioDirector.play_sfx("phone_tap", -8.0, 0.8)
-	_slide(480 + 8, true)
+	_slide(8.0, true)
 
 func _slide(y: float, hide_after := false) -> void:
 	if _tween:
@@ -615,21 +622,23 @@ func _on_message(msg_id: String) -> void:
 	notif.visible = true
 	notif.reset_size()
 	var w := notif.size.x
-	notif.position = Vector2(640, 404)
-	var t := notif.create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	t.tween_property(notif, "position:x", 640 - w - 12, 0.25)
-	t.tween_interval(3.5)
-	t.tween_property(notif, "position:x", 640.0, 0.3)
-	t.tween_callback(func(): notif.visible = false)
+	notif.position = Vector2(0, NOTIF_Y)
+	if _notif_tween:
+		_notif_tween.kill()
+	_notif_tween = notif.create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_notif_tween.tween_property(notif, "position:x", -w - 12.0, 0.25)
+	_notif_tween.tween_interval(3.5)
+	_notif_tween.tween_property(notif, "position:x", 0.0, 0.3)
+	_notif_tween.tween_callback(func(): notif.visible = false)
 
 func _process(dt: float) -> void:
 	if _shake > 0.0:
 		_shake -= dt
 		var off := Vector2(randf_range(-2, 2), randf_range(-1, 1)).round() if _shake > 0.0 else Vector2.ZERO
 		if is_open:
-			body.position.x = 640 - BODY_SIZE.x - 14 + off.x
+			body.position.x = PHONE_X + off.x
 		if notif.visible:
-			notif.position.y = 404 + off.y
+			notif.position.y = NOTIF_Y + off.y
 	if is_open and Engine.get_process_frames() % 30 == 0:
 		status_time.text = GameState.clock_string()
 

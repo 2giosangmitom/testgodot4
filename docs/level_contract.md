@@ -46,6 +46,7 @@ characters from `assets/models/chars/*.glb`.
 - Interactables: `RulesNote` (Readable `rules_note`, sets flag `read_rules` when read), `Drawer` (Interactable in storeroom; on use shows Readable `name_tag_store`, sets flag `found_name_tag_store`), `AlleyAltar` (Interactable in alley niche; Phase 3 handles incense logic; emits `used`), `Breaker` not here
 - NPCs (hidden): `Hanh`, `Customer1` (xe ôm: `passerby_m1`), `Customer2` (silent girl: `student_f2`), `OldLady` (`ba_cu`) — each with a Marker in `Markers` (`npc_counter`, `npc_door`, `npc_exit`)
 - Entities: `Gazer` (outside_glass, markers `gazer_1..gazer_6` far→near, last at the glass), `GazerHunt` (hunt, for Ch4 in alley, markers `hunt_1..hunt_5` along the alley)
+  - `GazerHunt` stands on the right in the direction of travel, leaving a capsule-width bypass on the left at each marker, including the final one. Reaching the last marker does not auto-catch; touching or staring still does.
 - Triggers: `trig_alley_enter`, `trig_alley_end` (→ dorm_shrine), `trig_store_front_ch4`
 - Markers: `cam_store_wide`, `cam_outside_glass`, `cam_alley`, `cam_counter`
 - Light groups: `store_lights` (tubes), `alley_lights` (wall lamps)

@@ -18,8 +18,6 @@ func _alley() -> void:
 	var hunt := node("Entities/GazerHunt") as Gazer
 	if hunt == null:
 		return
-	hunt.catch_at_path_end = false
-	hunt.final_behind_player = false
 	hunt.moved.connect(func(index: int):
 		if not active():
 			return
@@ -28,7 +26,7 @@ func _alley() -> void:
 		elif index == 3:
 			EventBus.lights_flicker.emit("alley_lights", 1.4)
 			say(["ch4_tuan_02"]))
-	objective("reach_shrine", "Đi vào ngõ. Đừng nhìn bóng người quá lâu.")
+	objective("reach_shrine", "Men bên trái lách qua bóng người. Đừng nhìn nó quá lâu.")
 	hunt.activate()
 	if GameState.debug_autoplay:
 		while hunt.index < hunt.marker_count() - 1:
@@ -60,7 +58,12 @@ func _shrine() -> void:
 	if not await wait_trigger("trig_shrine_close"):
 		return
 	GameState.complete_objective("shrine")
-	objective("ritual", "Thắp nhang → đặt ảnh → châm dầu → gọi tên → thắp đèn")
+	var offering_steps := ["ritual_incense", "ritual_photo", "ritual_oil"]
+	objective(offering_steps[0], "Thắp nhang ở bát hương")
+	objective(offering_steps[1], "Đặt ảnh lên bàn thờ")
+	objective(offering_steps[2], "Châm dầu vào chân đèn")
+	objective("ritual_name", "Chọn tên người trông đèn")
+	objective("ritual_light", "Thắp đèn dầu")
 	lamp.enabled = true
 	lamp.prompt = "Bỏ nghi thức"
 	var abandoned := [false]
@@ -92,6 +95,7 @@ func _shrine() -> void:
 			abandoned[0] = false
 		step.enabled = false
 		AudioDirector.play_sfx(sounds[i])
+		GameState.complete_objective(offering_steps[i])
 		if i == 1:
 			award("ch4_offering")
 	lamp.used.disconnect(cancel)
@@ -100,6 +104,7 @@ func _shrine() -> void:
 		0 if good_run() else 1)
 	if not active():
 		return
+	GameState.complete_objective("ritual_name")
 	if name_choice == 0:
 		award("ch4_called_name", 2)
 	lamp.enabled = true
@@ -113,7 +118,7 @@ func _shrine() -> void:
 	lamp.enabled = false
 	AudioDirector.play_sfx("match_strike")
 	GameState.set_flag("shrine_lamp_relit")
-	GameState.complete_objective("ritual")
+	GameState.complete_objective("ritual_light")
 	cutscene_begin("ritual_end", "cam_shrine_wide")
 	var shrine_lamp := level.find_child("ShrineLamp", true, false) as Light3D
 	if shrine_lamp:

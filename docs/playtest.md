@@ -30,6 +30,7 @@ done
 
 ## Chơi thử thật
 
+- Kiểm tra màn hình 16:9 và cửa sổ: HUD ghim danh sách nhiệm vụ ở góc trên phải, các ô tự đánh dấu khi hoàn thành.
 - Chơi mới từ menu; bước tới cổng trường và hoàn thành cả hai lượt thanh toán, xếp hàng, lau sàn.
 - Thử nhìn Gazer lâu trong Chương 1: phải có nhiễu nhưng không chết. Thử trả lời Mimic ở Chương 2:
   cảnh bị bắt phải đưa về checkpoint với số điểm và đồ vật cũ. Kiểm tra lại bằng nút **Tiếp tục**.

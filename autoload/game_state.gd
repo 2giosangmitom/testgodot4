@@ -31,7 +31,7 @@ func reset() -> void:
 	flags.clear()
 	resolve = 0
 	resolve_log.clear()
-	objectives.clear()
+	clear_objectives()
 	unlocked_messages.clear()
 	clock_minutes = 8 * 60
 	input_locks.clear()
@@ -79,6 +79,7 @@ func is_objective_done(id: String) -> bool:
 
 func clear_objectives() -> void:
 	objectives.clear()
+	EventBus.objectives_reset.emit()
 
 # --- phone messages ---
 func unlock_message(msg_id: String) -> void:
@@ -119,5 +120,6 @@ func from_dict(d: Dictionary) -> void:
 	resolve = int(d.get("resolve", 0))
 	resolve_log = d.get("resolve_log", [])
 	objectives = d.get("objectives", [])
+	EventBus.objectives_reset.emit()
 	unlocked_messages.assign(d.get("unlocked_messages", []))
 	clock_minutes = int(d.get("clock_minutes", 480))

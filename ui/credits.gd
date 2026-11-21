@@ -48,9 +48,12 @@ func _run(ending: String, seconds: float) -> void:
 	var col := VBoxContainer.new()
 	col.theme = THEME
 	col.custom_minimum_size = Vector2(560, 0)
-	col.position = Vector2(40, 480)
 	col.add_theme_constant_override("separation", 6)
 	bg.add_child(col)
+	col.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	col.offset_left = -280
+	col.offset_right = 280
+	col.position.y = bg.size.y
 	for l in LINES:
 		var lab := Label.new()
 		lab.text = l[0]
@@ -61,7 +64,7 @@ func _run(ending: String, seconds: float) -> void:
 		lab.add_theme_color_override("font_color", Color(0.9, 0.86, 0.76) if ending == "A" else Color(0.75, 0.7, 0.68))
 		col.add_child(lab)
 	await get_tree().process_frame
-	var end_y := -col.size.y
 	var t := create_tween()
-	t.tween_property(col, "position:y", end_y, seconds)
+	t.tween_method(func(progress: float):
+		col.position.y = lerpf(bg.size.y, -col.size.y, progress), 0.0, 1.0, seconds)
 	await t.finished

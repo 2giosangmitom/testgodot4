@@ -197,10 +197,10 @@ func _build_ui() -> void:
 	grad.texture = gt
 	grad.stretch_mode = TextureRect.STRETCH_SCALE
 	grad.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	grad.position = Vector2.ZERO
-	grad.size = Vector2(360, 480)
 	grad.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.add_child(grad)
+	grad.set_anchors_and_offsets_preset(Control.PRESET_LEFT_WIDE)
+	grad.offset_right = 360
 	var title := Label.new()
 	title.text = "ĐÈN ĐƯỜNG\nCUỐI NGÕ"
 	title.add_theme_font_size_override("font_size", 56)

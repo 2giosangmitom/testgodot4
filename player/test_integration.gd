@@ -20,7 +20,37 @@ func _ready() -> void:
 	player.teleport(Transform3D(Basis(), Vector3(0, 0, 2)))
 	await _frames(5)
 	check(GameState.player == player and player.is_in_group("player"), "player registered")
-	check(get_tree().get_first_node_in_group("hud") != null, "HUD instanced by player")
+	var hud := get_tree().get_first_node_in_group("hud")
+	check(hud != null, "HUD instanced by player")
+	var size := get_tree().root.content_scale_size
+	check(size.x * 9 == size.y * 16, "game viewport uses 16:9")
+	var saved_low_res := RenderSettings.low_res
+	RenderSettings.low_res = true
+	RenderSettings.apply_snap()
+	check(get_tree().root.content_scale_size == size and is_equal_approx(get_tree().root.scaling_3d_scale, 0.5),
+		"low resolution scales the 3D world only")
+	RenderSettings.low_res = saved_low_res
+	RenderSettings.apply_snap()
+	var tracker := hud.get_node("Root/ObjectiveTracker") as Control
+	var list := tracker.find_child("Checklist", true, false)
+	check(not tracker.visible, "checklist is hidden before there are objectives")
+	GameState.add_objective("test_first", "Nhặt chìa khóa")
+	GameState.add_objective("test_second", "Mở cửa sau")
+	await _frames(2)
+	check(tracker.visible and list.get_child_count() == 2, "current objectives stay pinned")
+	var right_edge := tracker.get_viewport_rect().size.x
+	check(is_equal_approx(tracker.get_global_rect().end.x, right_edge - 14.0), "checklist hugs the right edge")
+	check(tracker.size.y < 140.0, "two-task checklist stays compact")
+	GameState.complete_objective("test_first")
+	check(list.get_child(0).get_node("Status").button_pressed
+		and not list.get_child(1).get_node("Status").button_pressed, "only completed objectives are checked")
+	var saved := GameState.to_dict().duplicate(true)
+	GameState.clear_objectives()
+	check(not tracker.visible, "clearing objectives hides the checklist")
+	GameState.from_dict(saved)
+	check(tracker.visible and list.get_child(0).get_node("Status").button_pressed,
+		"restored objectives rebuild the checklist")
+	GameState.clear_objectives()
 	check(player.get_camera().near <= 0.051 and is_equal_approx(player.get_camera().fov, 70.0), "camera near/fov")
 	for m in ["get_camera", "teleport", "is_crouching", "is_sprinting", "is_hidden", "look_at_point",
 			"set_controls_enabled", "hold_item", "release_item", "get_held_item", "kill", "get_hold_point"]:
@@ -97,7 +127,11 @@ func _ready() -> void:
 	if ids.size() > 0:
 		GameState.unlock_message(ids[0])
 		phone.open()
+		GameState.add_objective("phone_test", "Mở điện thoại")
+		await _frames(2)
 		check(GameState.phone_open, "phone_open flag")
+		check(tracker.get_global_rect().end.x < phone.body.get_global_rect().position.x,
+			"checklist does not overlap the open phone")
 		phone._activate()   # unlock
 		phone._move(1)      # Tin nhắn
 		phone._activate()   # threads
@@ -112,6 +146,9 @@ func _ready() -> void:
 			check(absf(player.global_position.z - before.z) < 0.01, action + " does not move Nam while using phone")
 		phone.close()
 		check(not GameState.phone_open, "phone closed")
+		check(is_equal_approx(tracker.get_global_rect().end.x, right_edge - 14.0),
+			"checklist moves back to the right after closing phone")
+		GameState.clear_objectives()
 		var before := player.global_position
 		Input.action_press("move_forward")
 		await _frames(12)

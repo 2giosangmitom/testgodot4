@@ -104,12 +104,14 @@ func _test_traversal() -> void:
 		Vector3(3.8, 0, -2.95), Vector3(2.24, 0, -2.95), Vector3(2.24, 0, -4.4),
 		Vector3(3.99, 0, -4.4), Vector3(3.99, 0, -8.62), Vector3(3.87, 0, -9.45),
 		Vector3(3.87, 0, -11.44), Vector3(4.4, 0, -11.55), Vector3(4.4, 0, -12.8)])
-	_walk("alley entrance, both turns, shrine exit", [
+	var alley_route: Array[Vector3] = [
 		Vector3(4.4, 0, -12.8), Vector3(4.04, 0, -14.0), Vector3(4.04, 0, -26.9),
 		Vector3(4.33, 0, -28.0), Vector3(-5.5, 0, -28.0), Vector3(-6.4, 0, -27.80),
 		Vector3(-7.8, 0, -27.79), Vector3(-8.30, 0, -27.93),
-		Vector3(-8.62, 0, -28.19), Vector3(-9.95, 0, -28.19), Vector3(-14.0, 0, -28.05), Vector3(-14.0, 0, -41.95),
-		Vector3(-13.82, 0, -43.05), Vector3(-13.82, 0, -46.0), Vector3(-14.0, 0, -52.5)])
+		Vector3(-8.62, 0, -28.19), Vector3(-9.95, 0, -28.19), Vector3(-14.17, 0, -28.05), Vector3(-14.17, 0, -41.95),
+		Vector3(-13.82, 0, -43.05), Vector3(-13.82, 0, -46.0), Vector3(-14.15, 0, -49.2), Vector3(-14.15, 0, -52.5)]
+	_walk("alley entrance, both turns, shrine exit", alley_route)
+	_test_hunt_clearance(alley_route)
 	var space := player.get_world_3d().direct_space_state
 	var glass: MeshInstance3D = level.get_node("Env/Store/store_front_glass")
 	var glass_tint: Color = glass.get_surface_override_material(0).get_shader_parameter("tint")
@@ -133,6 +135,19 @@ func _test_traversal() -> void:
 		await physics_frame
 		await physics_frame
 		_check(trigger.fired, "%s fires on player passage" % id)
+
+func _test_hunt_clearance(route: Array[Vector3]) -> void:
+	var hunt = level.get_node("Entities/GazerHunt")
+	_check(not hunt.catch_at_path_end, "Gazer reaching the final marker does not catch the player automatically")
+	for index in hunt.marker_count():
+		var spot: Vector3 = hunt.get_marker_position(index)
+		var closest := INF
+		for i in range(1, route.size()):
+			var point := Geometry3D.get_closest_point_to_segment(spot, route[i - 1], route[i])
+			closest = minf(closest, spot.distance_to(point))
+		_check(closest >= hunt.catch_distance + 0.12,
+			"hunt marker %d leaves a walkable bypass (clearance %.2f m; catch radius %.2f m)" %
+			[index + 1, closest, hunt.catch_distance])
 
 func _walk(label: String, points: Array) -> void:
 	for i in range(1, points.size()):

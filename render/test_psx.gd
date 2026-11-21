@@ -58,7 +58,8 @@ func _ready() -> void:
 			rs.set_static(float(args.static))
 	if args.has("snap"):   # e.g. --snap=160 for extra wobble, --snap=100000 to disable
 		var r := float(args.snap)
-		RenderingServer.global_shader_parameter_set("psx_snap_resolution", Vector2(r, r * 0.75))
+		var viewport := get_viewport().get_visible_rect().size
+		RenderingServer.global_shader_parameter_set("psx_snap_resolution", Vector2(r, r * viewport.y / viewport.x))
 	if args.has("no-affine"):
 		RenderingServer.global_shader_parameter_set("psx_affine_strength", 0.0)
 	if args.has("steady"):
